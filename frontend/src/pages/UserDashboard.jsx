@@ -128,7 +128,13 @@ const UserDashboard = () => {
 
   const progressPercentage = (raised, goal) => (raised / goal) * 100;
 
-  const getCampaignImage = (category) => {
+  const getCampaignImage = (campaign) => {
+    // If campaign has an image_url, use it
+    if (campaign.image_url) {
+      return campaign.image_url;
+    }
+    
+    // Fallback to emojis for campaigns without images
     const images = {
       'Education': '📚',
       'Healthcare': '🏥',
@@ -138,7 +144,7 @@ const UserDashboard = () => {
       'Emergency': '🚨',
       'Community': '👥'
     };
-    return images[category] || '❤️';
+    return images[campaign.category] || '❤️';
   };
 
   const handleLogout = () => {
@@ -172,32 +178,6 @@ const UserDashboard = () => {
       <header className="sticky top-0 bg-white z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold text-emerald-700">HopeForAll</Link>
-          {/* <nav className="hidden md:flex gap-8 text-sm text-gray-700">
-            <button
-              onClick={() => setActiveTab('campaigns')}
-              className={`font-medium ${
-                activeTab === 'campaigns' ? 'text-emerald-700' : 'hover:text-emerald-700'
-              }`}
-            >
-              Campaigns
-            </button>
-            <button
-              onClick={() => setActiveTab('donations')}
-              className={`font-medium ${
-                activeTab === 'donations' ? 'text-emerald-700' : 'hover:text-emerald-700'
-              }`}
-            >
-              My Donations
-            </button>
-            <button
-              onClick={() => setActiveTab('volunteering')}
-              className={`font-medium ${
-                activeTab === 'volunteering' ? 'text-emerald-700' : 'hover:text-emerald-700'
-              }`}
-            >
-              My Volunteering
-            </button>
-          </nav> */}
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-700">Welcome, {user.name || 'User'}</span>
             <button
@@ -301,9 +281,29 @@ const UserDashboard = () => {
                         key={campaign.id}
                         className="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col hover:shadow-lg transition-shadow"
                       >
-                        <div className="h-48 bg-gray-200 w-full flex items-center justify-center text-4xl">
-                          {getCampaignImage(campaign.category)}
+                        {/* Campaign Image */}
+                        <div className="h-48 bg-gray-200 w-full overflow-hidden">
+                          {campaign.image_url ? (
+                            <img 
+                              src={campaign.image_url} 
+                              alt={campaign.title}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                // If image fails to load, show fallback
+                                e.target.style.display = 'none';
+                                const fallback = document.createElement('div');
+                                fallback.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-4xl';
+                                fallback.textContent = getCampaignImage(campaign);
+                                e.target.parentNode.appendChild(fallback);
+                              }}
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-200 flex items-center justify-center text-4xl">
+                              {getCampaignImage(campaign)}
+                            </div>
+                          )}
                         </div>
+                        
                         <div className="p-6 flex-grow flex flex-col">
                           <h3 className="font-bold text-lg mb-2 text-gray-800">{campaign.title}</h3>
                           <span className="inline-block bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full mb-4 self-start">

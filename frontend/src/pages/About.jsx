@@ -73,11 +73,11 @@ const About = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="text-center py-20 px-6 bg-gray-50">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">
+      <section className="text-center py-20 px-6 bg-emerald-700 text-white">
+        <h1 className="text-4xl md:text-5xl font-bold mb-6">
           About HopeForAll
         </h1>
-        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <p className="text-xl max-w-3xl mx-auto">
           Creating lasting change through compassion, community, and collective action. 
           Together, we're building a brighter future through education and opportunity.
         </p>
@@ -271,7 +271,7 @@ const About = () => {
       </section>
 
       {/* Partners Section */}
-      <section className="py-16 bg-white">
+      {/* <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Partners</h2>
@@ -305,7 +305,7 @@ const About = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-16 bg-emerald-800 text-white">

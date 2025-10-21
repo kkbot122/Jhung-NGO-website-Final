@@ -40,7 +40,13 @@ const Campaigns = () => {
 
   const progressPercentage = (raised, goal) => (raised / goal) * 100;
 
-  const getCampaignImage = (category) => {
+  const getCampaignImage = (campaign) => {
+    // If campaign has an image_url, use it
+    if (campaign.image_url) {
+      return campaign.image_url;
+    }
+    
+    // Fallback to emojis for campaigns without images
     const images = {
       'Education': '📚',
       'Healthcare': '🏥',
@@ -50,7 +56,7 @@ const Campaigns = () => {
       'Emergency': '🚨',
       'Community': '👥'
     };
-    return images[category] || '❤️';
+    return images[campaign.category] || '❤️';
   };
 
   const handleDonateClick = (campaign) => {
@@ -132,11 +138,11 @@ const Campaigns = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="text-center py-16 px-6 bg-gray-50">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
+      <section className="text-center py-16 px-6 bg-emerald-700 text-white">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">
           Discover Campaigns That Inspire Change
         </h1>
-        <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+        <p className="text-lg mb-8 max-w-2xl mx-auto">
           Explore our active campaigns and find the perfect opportunity to make a meaningful impact in communities around the world.
         </p>
         <div className="max-w-2xl mx-auto">
@@ -230,9 +236,27 @@ const Campaigns = () => {
                     key={campaign.id}
                     className="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col hover:shadow-lg transition-shadow"
                   >
-                    {/* Image placeholder */}
-                    <div className="h-48 bg-gray-200 w-full flex items-center justify-center text-4xl">
-                      {getCampaignImage(campaign.category)}
+                    {/* Campaign Image */}
+                    <div className="h-48 bg-gray-200 w-full overflow-hidden">
+                      {campaign.image_url ? (
+                        <img 
+                          src={campaign.image_url} 
+                          alt={campaign.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            // If image fails to load, show fallback
+                            e.target.style.display = 'none';
+                            const fallback = document.createElement('div');
+                            fallback.className = 'w-full h-full bg-gray-200 flex items-center justify-center text-4xl';
+                            fallback.textContent = getCampaignImage(campaign);
+                            e.target.parentNode.appendChild(fallback);
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center text-4xl">
+                          {getCampaignImage(campaign)}
+                        </div>
+                      )}
                     </div>
                     
                     <div className="p-6 flex-grow flex flex-col">

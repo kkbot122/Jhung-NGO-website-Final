@@ -282,7 +282,23 @@ const Home = () => {
   transition={{ type: "spring", stiffness: 300, damping: 20 }}
 >
                     {/* Image placeholder */}
-                    <div className="h-48 bg-gray-200 w-full"></div>
+                    <div className="h-48 bg-gray-200 w-full overflow-hidden">
+        {campaign.image_url ? (
+          <img 
+            src={campaign.image_url} 
+            alt={campaign.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'block';
+            }}
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <BookOpen className="h-12 w-12 text-gray-400" />
+          </div>
+        )}
+      </div>
                     <div className="p-6 flex-grow flex flex-col">
                         <h3 className="font-bold text-xl mb-2 text-gray-800">{campaign.title}</h3>
                         <span className="inline-block bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full mb-4 self-start">

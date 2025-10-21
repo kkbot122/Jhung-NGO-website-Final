@@ -44,41 +44,84 @@ export const deleteCampaign = async (req, res) => {
   res.json({ message: 'Campaign deleted successfully' });
 };
 
+// UPDATED: createCampaign with image upload support
 export const createCampaign = async (req, res) => {
-  const { title, description, goal, start_date, end_date, category } = req.body;
-  const created_by = req.user.id;
-
-  // Validation
-  if (!title || !description || !goal) {
-    return res.status(400).json({ error: 'Title, description, and goal are required' });
-  }
-
-  // Validate goal is a positive number
-  if (isNaN(goal) || parseFloat(goal) <= 0) {
-    return res.status(400).json({ error: 'Goal must be a positive number' });
-  }
-
   try {
+    console.log('=== CREATE CAMPAIGN START ===');
+    console.log('Request body:', req.body);
+    console.log('Request files:', req.files);
+    
+    const { title, description, goal, start_date, end_date, category } = req.body;
+    const created_by = req.user.id;
+
+    // Validation
+    if (!title || !description || !goal) {
+      return res.status(400).json({ error: 'Title, description, and goal are required' });
+    }
+
+    let imageUrl = null;
+
+    // Handle image upload - FIXED VERSION
+    if (req.files && req.files.length > 0) {
+      console.log('Files received:', req.files.length, 'files');
+      
+      // Since we're using upload.any(), all files are in req.files array
+      // Find the first image file (there might be duplicates due to the double upload issue)
+      const imageFile = req.files[0]; // Take the first file
+      
+      if (imageFile && imageFile.mimetype.startsWith('image/')) {
+        console.log('Processing image file:', imageFile.originalname);
+        
+        try {
+          const fileName = `campaigns/${Date.now()}-${imageFile.originalname}`;
+          
+          console.log('Uploading to Supabase storage...');
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('campaign-images')
+            .upload(fileName, imageFile.buffer, {
+              contentType: imageFile.mimetype,
+              upsert: false
+            });
+
+          if (uploadError) {
+            console.error('❌ Supabase storage upload error:', uploadError);
+            // Don't throw, just continue without image
+          } else {
+            // Get public URL
+            const { data: { publicUrl } } = supabase.storage
+              .from('campaign-images')
+              .getPublicUrl(fileName);
+
+            imageUrl = publicUrl;
+            console.log('✅ Image uploaded successfully. URL:', imageUrl);
+          }
+          
+        } catch (uploadError) {
+          console.error('❌ Image upload failed:', uploadError);
+          // Continue without image
+        }
+      }
+    } else {
+      console.log('No files uploaded');
+    }
+
     // Prepare campaign data
     const campaignData = {
-      title: title.trim(), 
-      description: description.trim(), 
+      title: title.trim(),
+      description: description.trim(),
       goal: parseFloat(goal),
       collected: 0,
       category: (category && category.trim()) || 'General',
       created_by,
-      start_date: start_date || new Date().toISOString().split('T')[0] // Default to today
+      start_date: start_date || new Date().toISOString().split('T')[0],
+      image_url: imageUrl // This should now have the URL
     };
 
-    // Only add end_date if it's provided and valid
     if (end_date && end_date.trim() !== '') {
-      // Validate date format (basic check)
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!dateRegex.test(end_date)) {
-        return res.status(400).json({ error: 'End date must be in YYYY-MM-DD format' });
-      }
       campaignData.end_date = end_date;
     }
+
+    console.log('Creating campaign with data:', campaignData);
 
     const { data, error } = await supabase
       .from('campaigns')
@@ -86,22 +129,13 @@ export const createCampaign = async (req, res) => {
       .select()
       .single();
 
-    if (error) {
-      console.error('Supabase error:', error);
-      throw error;
-    }
+    if (error) throw error;
     
+    console.log('✅ Campaign created successfully with image URL:', data.image_url);
     res.status(201).json(data);
-  } catch (error) {
-    console.error('Create campaign error:', error);
     
-    // More specific error messages
-    if (error.message.includes('invalid input syntax for type date')) {
-      res.status(400).json({ error: 'Invalid date format. Please use YYYY-MM-DD format.' });
-    } else if (error.message.includes('value too long')) {
-      res.status(400).json({ error: 'Text fields are too long. Please shorten your input.' });
-    } else {
-      res.status(500).json({ error: error.message });
-    }
+  } catch (error) {
+    console.error('❌ Create campaign error:', error);
+    res.status(500).json({ error: error.message });
   }
 };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Heart, DollarSign, BarChart3, LogOut, Plus, X, Calendar, Target, Trash2, Edit } from 'lucide-react';
+import { Users, Heart, DollarSign, BarChart3, LogOut, Plus, X, Calendar, Target, Trash2, Edit, Upload } from 'lucide-react';
 import { adminAPI, campaignAPI, getCurrentUser, isAuthenticated } from '../api/api.js';
 
 const AdminDashboard = () => {
@@ -25,6 +25,8 @@ const AdminDashboard = () => {
     end_date: '',
     category: 'General'
   });
+  const [campaignImage, setCampaignImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [creatingCampaign, setCreatingCampaign] = useState(false);
 
   const categories = [
@@ -146,21 +148,48 @@ const handleDeleteCampaign = async () => {
   }
 };
 
+  // Add image preview handler
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCampaignImage(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleCreateCampaign = async (e) => {
     e.preventDefault();
     setCreatingCampaign(true);
 
     try {
-      // Prepare data - remove empty end_date if not provided
-      const submitData = { ...campaignForm };
-      if (!submitData.end_date) {
-        delete submitData.end_date;
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('title', campaignForm.title);
+      formData.append('description', campaignForm.description);
+      formData.append('goal', campaignForm.goal);
+      formData.append('start_date', campaignForm.start_date);
+      formData.append('category', campaignForm.category);
+
+      if (campaignForm.end_date) {
+        formData.append('end_date', campaignForm.end_date);
+      }
+      
+      if (campaignImage) {
+        formData.append('image', campaignImage);
       }
 
-      await campaignAPI.createCampaign(submitData);
+      await campaignAPI.createCampaign(formData);
       
-      // alert('Campaign created successfully!');
+      alert('Campaign created successfully!');
       setShowCreateModal(false);
+      
+      // Reset form
       setCampaignForm({
         title: '',
         description: '',
@@ -169,6 +198,8 @@ const handleDeleteCampaign = async () => {
         end_date: '',
         category: 'General'
       });
+      setCampaignImage(null);
+      setImagePreview(null);
       
       // Refresh campaigns data
       fetchData();
@@ -725,7 +756,11 @@ const handleDeleteCampaign = async () => {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold">Create New Campaign</h3>
               <button
-                onClick={() => setShowCreateModal(false)}
+                onClick={() => {
+                  setShowCreateModal(false);
+                  setImagePreview(null);
+                  setCampaignImage(null);
+                }}
                 className="text-gray-400 hover:text-gray-600"
               >
                 <X size={24} />
@@ -733,6 +768,49 @@ const handleDeleteCampaign = async () => {
             </div>
 
             <form onSubmit={handleCreateCampaign} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Campaign Image
+                </label>
+                <div className="flex items-center justify-center w-full">
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                    {imagePreview ? (
+                      <div className="relative w-full h-full">
+                        <img 
+                          src={imagePreview} 
+                          alt="Preview" 
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setImagePreview(null);
+                            setCampaignImage(null);
+                          }}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="w-8 h-8 mb-2 text-gray-500" />
+                        <p className="text-sm text-gray-500">
+                          <span className="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-500">PNG, JPG, GIF (MAX. 5MB)</p>
+                      </div>
+                    )}
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                </div>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Campaign Title *

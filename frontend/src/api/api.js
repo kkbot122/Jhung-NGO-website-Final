@@ -3,17 +3,19 @@ const API_BASE_URL = 'http://localhost:5000'; // Adjust port as needed
 // Generic API call function
 const apiCall = async (endpoint, options = {}) => {
   const token = localStorage.getItem('token');
+  const isFormData = options.body instanceof FormData;
   
   const config = {
     headers: {
-      'Content-Type': 'application/json',
+      // 'Content-Type': 'application/json',
+      ...(!isFormData && { 'Content-Type': 'application/json' }),
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
     ...options,
   };
 
-  if (config.body) {
+  if (config.body && !isFormData) {
     config.body = JSON.stringify(config.body);
   }
 
@@ -92,8 +94,22 @@ export const userAPI = {
 export const campaignAPI = {
   getCampaigns: () => apiCall('/campaigns'),
   getCampaign: (id) => apiCall(`/campaigns/${id}`),
-  createCampaign: (campaignData) => apiCall('/campaigns', { method: 'POST', body: campaignData }),
+  createCampaign: (campaignData) => {
+    // If it's FormData, use as-is, otherwise stringify
+    if (campaignData instanceof FormData) {
+      return apiCall('/campaigns', { 
+        method: 'POST', 
+        body: campaignData 
+      });
+    } else {
+      return apiCall('/campaigns', { 
+        method: 'POST', 
+        body: campaignData 
+      });
+    }
+  },
   deleteCampaign: (campaignId) => apiCall(`/campaigns/${campaignId}`, { method: 'DELETE' }),
 };
+
 
 export default apiCall;

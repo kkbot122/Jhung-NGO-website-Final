@@ -9,14 +9,18 @@ import volunteerRoutes from './routes/volunteers.js';
 import donationRoutes from './routes/donations.js';
 import userRoutes from './routes/user.js';
 
-
 const app = express();
+
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true
 }));
-app.use(express.json());
 
+// Apply JSON and URL-encoded parsers to ALL routes
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Now all routes can handle both JSON and form data
 app.use('/auth', authRoutes);
 app.use('/campaigns', campaignRoutes);
 app.use('/volunteers', volunteerRoutes);
