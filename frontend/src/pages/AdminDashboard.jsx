@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Heart, DollarSign, BarChart3, LogOut, Plus, X, Calendar, Target } from 'lucide-react';
+import { Users, Heart, DollarSign, BarChart3, LogOut, Plus, X, Calendar, Target, Trash2, Edit } from 'lucide-react';
 import { adminAPI, campaignAPI, getCurrentUser, isAuthenticated } from '../api/api.js';
 
 const AdminDashboard = () => {
@@ -11,7 +11,10 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
+  const [campaignToDelete, setCampaignToDelete] = useState(null);
+  const [deletingCampaign, setDeletingCampaign] = useState(false);
 
   // Campaign form state
   const [campaignForm, setCampaignForm] = useState({
@@ -107,6 +110,42 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteClick = (campaign) => {
+  console.log('Delete button clicked for campaign:', campaign);
+  console.log('Campaign ID:', campaign.id);
+  setCampaignToDelete(campaign);
+  setShowDeleteModal(true);
+};
+
+const handleDeleteCampaign = async () => {
+  if (!campaignToDelete) {
+    console.log('No campaign to delete');
+    return;
+  }
+
+  console.log('Attempting to delete campaign with ID:', campaignToDelete.id);
+  
+  setDeletingCampaign(true);
+  try {
+    console.log('Calling campaignAPI.deleteCampaign...');
+    const result = await campaignAPI.deleteCampaign(campaignToDelete.id);
+    console.log('Delete API response:', result);
+    
+    alert('Campaign deleted successfully!');
+    setShowDeleteModal(false);
+    setCampaignToDelete(null);
+    
+    // Refresh campaigns data
+    fetchData();
+  } catch (error) {
+    console.error('Error deleting campaign:', error);
+    console.error('Error message:', error.message);
+    alert('Failed to delete campaign: ' + error.message);
+  } finally {
+    setDeletingCampaign(false);
+  }
+};
+
   const handleCreateCampaign = async (e) => {
     e.preventDefault();
     setCreatingCampaign(true);
@@ -120,7 +159,7 @@ const AdminDashboard = () => {
 
       await campaignAPI.createCampaign(submitData);
       
-      alert('Campaign created successfully!');
+      // alert('Campaign created successfully!');
       setShowCreateModal(false);
       setCampaignForm({
         title: '',
@@ -487,6 +526,17 @@ const AdminDashboard = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {new Date(campaign.created_at).toLocaleDateString()}
                         </td>
+                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleDeleteClick(campaign)}
+                              className="text-red-600 hover:text-red-900 transition-colors"
+                              title="Delete Campaign"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -786,6 +836,68 @@ const AdminDashboard = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Campaign Modal */}
+      {showDeleteModal && campaignToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <div className="flex items-center mb-4">
+              <div className="bg-red-100 p-2 rounded-full mr-3">
+                <Trash2 className="h-6 w-6 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Delete Campaign</h3>
+            </div>
+            
+            <p className="text-gray-600 mb-4">
+              Are you sure you want to delete the campaign "<strong>{campaignToDelete.title}</strong>"? 
+              This action cannot be undone and all associated data will be permanently removed.
+            </p>
+            
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center">
+                <div className="text-red-600 mr-2">
+                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <p className="text-red-800 text-sm font-medium">
+                  Warning: This action is irreversible!
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setCampaignToDelete(null);
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                disabled={deletingCampaign}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteCampaign}
+                disabled={deletingCampaign}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {deletingCampaign ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={16} />
+                    Delete Campaign
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

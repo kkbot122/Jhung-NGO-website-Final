@@ -1,7 +1,19 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Heart, Users, Target, Clock, DollarSign, ArrowRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Heart, Users, DollarSign, BookOpen, HandHeart, School, Plus } from 'lucide-react';
 import { campaignAPI, userAPI, donationAPI, volunteerAPI, getCurrentUser, isAuthenticated } from '../api/api.js';
+
+
+// Helper component for consistent styling
+const StatCard = ({ icon: Icon, label, value, color = "emerald" }) => (
+  <div className="bg-white rounded-lg border border-gray-200 p-6 text-center">
+    <div className={`bg-${color}-100 text-${color}-600 p-3 rounded-full inline-flex mb-4`}>
+      <Icon size={24} />
+    </div>
+    <div className="text-2xl font-bold text-gray-800 mb-1">{value}</div>
+    <div className="text-sm text-gray-600">{label}</div>
+  </div>
+);
 
 const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState('campaigns');
@@ -45,11 +57,9 @@ const UserDashboard = () => {
         const campaignsData = await campaignAPI.getCampaigns();
         setCampaigns(campaignsData);
       } else if (activeTab === 'donations') {
-        // Use real backend data
         const donationsData = await userAPI.getUserDonations();
         setMyDonations(donationsData);
       } else if (activeTab === 'volunteering') {
-        // Use real backend data
         const volunteerData = await userAPI.getUserVolunteerApplications();
         setMyVolunteerApplications(volunteerData);
       }
@@ -83,7 +93,7 @@ const UserDashboard = () => {
       setShowDonationModal(false);
       setDonationAmount('');
       setSelectedCampaign(null);
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error) {
       alert('Donation failed: ' + error.message);
     }
@@ -110,7 +120,7 @@ const UserDashboard = () => {
       setShowVolunteerModal(false);
       setVolunteerMessage('');
       setSelectedCampaign(null);
-      fetchData(); // Refresh data
+      fetchData();
     } catch (error) {
       alert('Volunteer application failed: ' + error.message);
     }
@@ -141,306 +151,370 @@ const UserDashboard = () => {
     return myDonations.reduce((total, donation) => total + parseFloat(donation.amount), 0);
   };
 
+  const getTotalCampaignsSupported = () => {
+    const uniqueCampaigns = new Set(myDonations.map(donation => donation.campaign_id));
+    return uniqueCampaigns.size;
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-2xl font-bold text-green-600 mb-4">Loading...</div>
+          <div className="text-2xl font-bold text-emerald-700 mb-4">Loading...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 font-sans">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <div className="text-2xl font-bold text-green-600 mr-8">HopeForAll</div>
-              <nav className="flex space-x-8">
-                <button
-                  onClick={() => setActiveTab('campaigns')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    activeTab === 'campaigns'
-                      ? 'bg-green-100 text-green-700'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  Ongoing Campaigns
-                </button>
-                <button
-                  onClick={() => setActiveTab('donations')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    activeTab === 'donations'
-                      ? 'bg-green-100 text-green-700'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  My Donations
-                </button>
-                <button
-                  onClick={() => setActiveTab('volunteering')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    activeTab === 'volunteering'
-                      ? 'bg-green-100 text-green-700'
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  My Volunteering
-                </button>
-              </nav>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">Welcome, {user.name || 'User'}</span>
-              <button
-                onClick={handleLogout}
-                className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 border border-gray-300 rounded-md"
-              >
-                Logout
-              </button>
-            </div>
+      <header className="sticky top-0 bg-white z-50 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link to="/" className="text-2xl font-bold text-emerald-700">HopeForAll</Link>
+          {/* <nav className="hidden md:flex gap-8 text-sm text-gray-700">
+            <button
+              onClick={() => setActiveTab('campaigns')}
+              className={`font-medium ${
+                activeTab === 'campaigns' ? 'text-emerald-700' : 'hover:text-emerald-700'
+              }`}
+            >
+              Campaigns
+            </button>
+            <button
+              onClick={() => setActiveTab('donations')}
+              className={`font-medium ${
+                activeTab === 'donations' ? 'text-emerald-700' : 'hover:text-emerald-700'
+              }`}
+            >
+              My Donations
+            </button>
+            <button
+              onClick={() => setActiveTab('volunteering')}
+              className={`font-medium ${
+                activeTab === 'volunteering' ? 'text-emerald-700' : 'hover:text-emerald-700'
+              }`}
+            >
+              My Volunteering
+            </button>
+          </nav> */}
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-700">Welcome, {user.name || 'User'}</span>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50 transition"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-8 px-6">
         {/* Welcome Section */}
-        <div className="px-4 mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
             Welcome back, {user.name || 'Valued Supporter'}!
           </h1>
-          <p className="text-gray-600 mt-2">
-            Thank you for being part of our mission to create positive change.
+          <p className="text-gray-600 text-lg">
+            Thank you for being part of our mission to create positive change through education.
           </p>
         </div>
 
-        {/* Campaigns Tab */}
-        {activeTab === 'campaigns' && (
-          <div className="px-4">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">Ongoing Campaigns</h2>
-              <p className="text-gray-600">Support our current initiatives and make a difference</p>
-            </div>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <StatCard 
+            icon={Heart} 
+            label="Total Donated" 
+            value={`$${getTotalDonated().toLocaleString()}`}
+            color="emerald"
+          />
+          <StatCard 
+            icon={BookOpen} 
+            label="Campaigns Supported" 
+            value={getTotalCampaignsSupported()}
+            color="blue"
+          />
+          <StatCard 
+            icon={Users} 
+            label="Volunteer Applications" 
+            value={myVolunteerApplications.length}
+            color="purple"
+          />
+        </div>
 
-            {loading ? (
-              <div className="text-center py-8">Loading campaigns...</div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {campaigns.map(campaign => (
-                  <div
-                    key={campaign.id}
-                    className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow border border-gray-100"
-                  >
-                    <div className="p-6">
-                      <div className="text-4xl mb-4 text-center">
-                        {getCampaignImage(campaign.category)}
-                      </div>
-                      <h3 className="font-semibold text-lg mb-2 text-center text-gray-800">
-                        {campaign.title}
-                      </h3>
-                      <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mb-3">
-                        {campaign.category || 'General'}
-                      </span>
-                      <p className="text-gray-600 text-sm mb-4 text-center">
-                        {campaign.description}
-                      </p>
-                      
-                      {/* Progress Bar */}
-                      <div className="mb-4">
-                        <div className="flex justify-between text-sm text-gray-600 mb-1">
-                          <span>Raised: ${(campaign.collected || 0).toLocaleString()}</span>
-                          <span>Goal: ${campaign.goal.toLocaleString()}</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-green-600 h-2 rounded-full" 
-                            style={{ width: `${Math.min(progressPercentage(campaign.collected || 0, campaign.goal), 100)}%` }}
-                          ></div>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="text-sm text-gray-600">
-                          {Math.round(progressPercentage(campaign.collected || 0, campaign.goal))}% funded
-                        </span>
-                      </div>
-
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => handleDonate(campaign)}
-                          className="flex-1 px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-1"
-                        >
-                          <DollarSign size={16} />
-                          Donate
-                        </button>
-                        <button 
-                          onClick={() => handleVolunteer(campaign)}
-                          className="flex-1 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-1"
-                        >
-                          <Users size={16} />
-                          Volunteer
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {!loading && campaigns.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-600 text-lg">No ongoing campaigns at the moment.</p>
-              </div>
-            )}
+        {/* Tab Content */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          {/* Tab Navigation */}
+          <div className="border-b border-gray-200">
+            <nav className="flex">
+              <button
+                onClick={() => setActiveTab('campaigns')}
+                className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                  activeTab === 'campaigns'
+                    ? 'border-emerald-700 text-emerald-700 bg-emerald-50'
+                    : 'border-transparent text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                Ongoing Campaigns
+              </button>
+              <button
+                onClick={() => setActiveTab('donations')}
+                className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                  activeTab === 'donations'
+                    ? 'border-emerald-700 text-emerald-700 bg-emerald-50'
+                    : 'border-transparent text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                My Donations
+              </button>
+              <button
+                onClick={() => setActiveTab('volunteering')}
+                className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                  activeTab === 'volunteering'
+                    ? 'border-emerald-700 text-emerald-700 bg-emerald-50'
+                    : 'border-transparent text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                My Volunteering
+              </button>
+            </nav>
           </div>
-        )}
 
-        {/* My Donations Tab */}
-        {activeTab === 'donations' && (
-          <div className="px-4">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">My Donations</h2>
-              <p className="text-gray-600">Your generous contributions making a difference</p>
-              
-              {/* Total Donated Summary */}
-              {myDonations.length > 0 && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-green-800">Total Donated</h3>
-                      <p className="text-green-600">Thank you for your support!</p>
-                    </div>
-                    <div className="text-2xl font-bold text-green-700">
-                      ${getTotalDonated().toLocaleString()}
-                    </div>
-                  </div>
+          {/* Tab Panels */}
+          <div className="p-6">
+            {/* Campaigns Tab */}
+            {activeTab === 'campaigns' && (
+              <div>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">Ongoing Campaigns</h2>
+                  <p className="text-gray-600">Support our current initiatives and make a difference</p>
                 </div>
-              )}
-            </div>
 
-            {loading ? (
-              <div className="text-center py-8">Loading donations...</div>
-            ) : (
-              <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                {myDonations.length > 0 ? (
-                  <div className="divide-y divide-gray-200">
-                    {myDonations.map((donation) => (
-                      <div key={donation.id} className="px-6 py-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <Heart className="h-5 w-5 text-green-600 mr-3" />
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">
-                                Donation to {donation.campaigns?.title || 'Campaign'}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {donation.note || 'Thank you for your support!'}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-lg font-bold text-green-600">
-                              ${parseFloat(donation.amount).toLocaleString()}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {new Date(donation.created_at).toLocaleDateString()}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                {loading ? (
+                  <div className="text-center py-8 text-gray-600">Loading campaigns...</div>
                 ) : (
-                  <div className="px-6 py-12 text-center">
-                    <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No donations yet</h3>
-                    <p className="text-gray-500 mb-4">Your donations will appear here once you start supporting campaigns.</p>
-                    <button
-                      onClick={() => setActiveTab('campaigns')}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                    >
-                      Browse Campaigns
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* My Volunteering Tab */}
-        {activeTab === 'volunteering' && (
-          <div className="px-4">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">My Volunteer Applications</h2>
-              <p className="text-gray-600">Your applications to volunteer for various campaigns</p>
-            </div>
-
-            {loading ? (
-              <div className="text-center py-8">Loading applications...</div>
-            ) : (
-              <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                {myVolunteerApplications.length > 0 ? (
-                  <div className="divide-y divide-gray-200">
-                    {myVolunteerApplications.map((application) => (
-                      <div key={application.id} className="px-6 py-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <Users className="h-5 w-5 text-blue-600 mr-3" />
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">
-                                Volunteer for {application.campaigns?.title || 'Campaign'}
-                              </div>
-                              <div className="text-sm text-gray-500 max-w-md">
-                                {application.message}
-                              </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {campaigns.map(campaign => (
+                      <div
+                        key={campaign.id}
+                        className="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col hover:shadow-lg transition-shadow"
+                      >
+                        <div className="h-48 bg-gray-200 w-full flex items-center justify-center text-4xl">
+                          {getCampaignImage(campaign.category)}
+                        </div>
+                        <div className="p-6 flex-grow flex flex-col">
+                          <h3 className="font-bold text-lg mb-2 text-gray-800">{campaign.title}</h3>
+                          <span className="inline-block bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full mb-4 self-start">
+                            {campaign.category || 'General'}
+                          </span>
+                          <p className="text-gray-600 text-sm mb-4 flex-grow">{campaign.description}</p>
+                          
+                          {/* Progress Bar */}
+                          <div className="mb-4">
+                            <div className="flex justify-between text-sm text-gray-600 mb-1">
+                              <span>Raised: ${(campaign.collected || 0).toLocaleString()}</span>
+                              <span>Goal: ${campaign.goal.toLocaleString()}</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-emerald-600 h-2 rounded-full" 
+                                style={{ width: `${Math.min(progressPercentage(campaign.collected || 0, campaign.goal), 100)}%` }}
+                              ></div>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              application.status === 'approved' 
-                                ? 'bg-green-100 text-green-800'
-                                : application.status === 'rejected'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {application.status || 'Pending'}
+
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-sm text-gray-600">
+                              {Math.round(progressPercentage(campaign.collected || 0, campaign.goal))}% funded
                             </span>
-                            <div className="text-sm text-gray-500 mt-1">
-                              {new Date(application.applied_at).toLocaleDateString()}
-                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <button 
+                              onClick={() => handleDonate(campaign)}
+                              className="flex-1 px-4 py-2 bg-emerald-700 text-white text-sm rounded-md hover:bg-emerald-800 transition flex items-center justify-center gap-1"
+                            >
+                              <DollarSign size={16} />
+                              Donate
+                            </button>
+                            <button 
+                              onClick={() => handleVolunteer(campaign)}
+                              className="flex-1 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition flex items-center justify-center gap-1"
+                            >
+                              <Users size={16} />
+                              Volunteer
+                            </button>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
+                )}
+
+                {!loading && campaigns.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-gray-600 text-lg">No ongoing campaigns at the moment.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* My Donations Tab */}
+            {activeTab === 'donations' && (
+              <div>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">My Donations</h2>
+                  <p className="text-gray-600">Your generous contributions making a difference</p>
+                  
+                  {/* Total Donated Summary */}
+                  {myDonations.length > 0 && (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 mb-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold text-emerald-800">Total Impact</h3>
+                          <p className="text-emerald-600">Thank you for your incredible support!</p>
+                        </div>
+                        <div className="text-3xl font-bold text-emerald-700">
+                          ${getTotalDonated().toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {loading ? (
+                  <div className="text-center py-8 text-gray-600">Loading donations...</div>
                 ) : (
-                  <div className="px-6 py-12 text-center">
-                    <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No volunteer applications yet</h3>
-                    <p className="text-gray-500 mb-4">Your volunteer applications will appear here once you apply.</p>
-                    <button
-                      onClick={() => setActiveTab('campaigns')}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                    >
-                      Browse Campaigns
-                    </button>
+                  <div className="space-y-4">
+                    {myDonations.length > 0 ? (
+                      myDonations.map((donation) => (
+                        <div key={donation.id} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="bg-emerald-100 p-3 rounded-full mr-4">
+                                <Heart className="h-6 w-6 text-emerald-600" />
+                              </div>
+                              <div>
+                                <div className="font-semibold text-gray-900">
+                                  Donation to {donation.campaigns?.title || 'Campaign'}
+                                </div>
+                                <div className="text-sm text-gray-600 mt-1">
+                                  {donation.note || 'Thank you for your support!'}
+                                </div>
+                                <div className="text-xs text-gray-500 mt-1">
+                                  {new Date(donation.created_at).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-xl font-bold text-emerald-700">
+                                ${parseFloat(donation.amount).toLocaleString()}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-12">
+                        <Heart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">No donations yet</h3>
+                        <p className="text-gray-600 mb-6">Your donations will appear here once you start supporting campaigns.</p>
+                        <button
+                          onClick={() => setActiveTab('campaigns')}
+                          className="px-6 py-3 bg-emerald-700 text-white rounded-md hover:bg-emerald-800 transition font-medium"
+                        >
+                          Browse Campaigns
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* My Volunteering Tab */}
+            {activeTab === 'volunteering' && (
+              <div>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">My Volunteer Applications</h2>
+                  <p className="text-gray-600">Your applications to volunteer for various campaigns</p>
+                </div>
+
+                {loading ? (
+                  <div className="text-center py-8 text-gray-600">Loading applications...</div>
+                ) : (
+                  <div className="space-y-4">
+                    {myVolunteerApplications.length > 0 ? (
+                      myVolunteerApplications.map((application) => (
+                        <div key={application.id} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="bg-blue-100 p-3 rounded-full mr-4">
+                                <Users className="h-6 w-6 text-blue-600" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-semibold text-gray-900">
+                                  Volunteer for {application.campaigns?.title || 'Campaign'}
+                                </div>
+                                <div className="text-sm text-gray-600 mt-1 max-w-md">
+                                  {application.message}
+                                </div>
+                                <div className="text-xs text-gray-500 mt-1">
+                                  Applied on {new Date(application.applied_at).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <span className={`px-3 py-1 text-sm rounded-full font-medium ${
+                                application.status === 'approved' 
+                                  ? 'bg-green-100 text-green-800'
+                                  : application.status === 'rejected'
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-yellow-100 text-yellow-800'
+                              }`}>
+                                {application.status?.charAt(0).toUpperCase() + application.status?.slice(1) || 'Pending'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-12">
+                        <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">No volunteer applications yet</h3>
+                        <p className="text-gray-600 mb-6">Your volunteer applications will appear here once you apply.</p>
+                        <button
+                          onClick={() => setActiveTab('campaigns')}
+                          className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition font-medium"
+                        >
+                          Browse Campaigns
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             )}
           </div>
-        )}
+        </div>
       </main>
 
       {/* Donation Modal */}
       {showDonationModal && selectedCampaign && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Donate to {selectedCampaign.title}</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full">
+            <h3 className="text-xl font-bold mb-2">Donate to {selectedCampaign.title}</h3>
+            <p className="text-gray-600 mb-6">Your contribution makes a difference!</p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Donation Amount ($)
@@ -449,7 +523,7 @@ const UserDashboard = () => {
                 type="number"
                 value={donationAmount}
                 onChange={(e) => setDonationAmount(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 placeholder="Enter amount"
                 min="1"
               />
@@ -467,7 +541,7 @@ const UserDashboard = () => {
               </button>
               <button
                 onClick={processDonation}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                className="flex-1 px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition"
               >
                 Donate Now
               </button>
@@ -478,9 +552,10 @@ const UserDashboard = () => {
 
       {/* Volunteer Modal */}
       {showVolunteerModal && selectedCampaign && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Volunteer for {selectedCampaign.title}</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full">
+            <h3 className="text-xl font-bold mb-2">Volunteer for {selectedCampaign.title}</h3>
+            <p className="text-gray-600 mb-6">Tell us about your interest and skills</p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Why do you want to volunteer for this campaign?

@@ -93,6 +93,7 @@ export const campaignAPI = {
   getCampaigns: () => apiCall('/campaigns'),
   getCampaign: (id) => apiCall(`/campaigns/${id}`),
   createCampaign: (campaignData) => apiCall('/campaigns', { method: 'POST', body: campaignData }),
+  deleteCampaign: (campaignId) => apiCall(`/campaigns/${campaignId}`, { method: 'DELETE' }),
 };
 
 export default apiCall;

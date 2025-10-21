@@ -2,21 +2,41 @@ import { useState, useEffect } from 'react';
 import { Search, Heart, Users, ArrowRight, BookOpen, HandHeart, School, Plus } from 'lucide-react';
 import { campaignAPI, isAuthenticated, getCurrentUser, donationAPI } from '../api/api.js'; // Assuming all APIs are in one file
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from "framer-motion";
+
 
 // Helper component for FAQ items
 const FaqItem = ({ question, children }) => {
   const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="border-b border-gray-200 py-4">
-      <button onClick={() => setIsOpen(!isOpen)} className="w-full flex justify-between items-center text-left text-gray-800">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex justify-between items-center text-left text-gray-800"
+      >
         <span className="font-medium">{question}</span>
-        <Plus className={`transform transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`} size={20} />
+        <motion.div
+          animate={{ rotate: isOpen ? 45 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Plus size={20} />
+        </motion.div>
       </button>
-      {isOpen && (
-        <div className="mt-4 text-gray-600">
-          {children}
-        </div>
-      )}
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="overflow-hidden mt-4 text-gray-600"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -27,8 +47,8 @@ const Home = () => {
   const [showDonationModal, setShowDonationModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [donationAmount, setDonationAmount] = useState('');
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  // const [activeFilter, setActiveFilter] = useState('all');
+  // const [searchTerm, setSearchTerm] = useState('');
   
   // A smaller, featured set of campaigns for the home page
   const featuredCampaigns = campaigns.slice(0, 3);
@@ -95,9 +115,17 @@ const Home = () => {
           </nav>
           <div className="flex items-center gap-4">
             {!isAuthenticated() ? (
+                <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
               <Link to="/register" className="px-5 py-2 bg-emerald-700 text-white rounded-md hover:bg-emerald-800 transition text-sm font-medium">
                 Register
               </Link>
+              </motion.div>
             ) : (
                <button 
                  onClick={() => handleDonateClick(campaigns[0])} // Triggers general donation
@@ -112,45 +140,97 @@ const Home = () => {
 
       {/* Hero Section */}
       <section className="text-center py-20 px-6 bg-gray-50">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 text-gray-800">
+        <motion.h1 
+        initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8, ease: "easeOut" }}
+    className="text-4xl md:text-6xl font-bold mb-4 text-gray-800">
           Give the gift of learning
-        </h1>
-        <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-          Your help provides children with books, supplies, and safe classrooms. Join us in our mission to ensure that every child has the opportunity to succeed.
-        </p>
-        <button 
-          onClick={() => handleDonateClick(campaigns[0])} // Donate to a general fund or first campaign
-          className="px-8 py-3 bg-emerald-700 text-white rounded-md hover:bg-emerald-800 transition font-medium"
-        >
-          Donate Now
-        </button>
+        </motion.h1>
+         <motion.p
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+    className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
+  >
+    Your help provides children with books, supplies, and safe classrooms. Join us in our mission to ensure that every child has the opportunity to succeed.
+  </motion.p>
+          <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={() => handleDonateClick(campaigns[0])}
+    className="px-8 py-3 bg-emerald-700 text-white rounded-md hover:bg-emerald-800 transition font-medium"
+  >
+    Donate Now
+  </motion.button>
+
         {/* Image placeholders and stats */}
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 text-left">
-            <div className="h-40 bg-gray-200 rounded-lg flex items-end p-4">
-                <div className="bg-white p-2 rounded">
-                    <p className="font-bold text-xl text-emerald-700">1 Million+</p>
-                    <p className="text-sm text-gray-600">Smiles Reached</p>
-                </div>
-            </div>
-             {/* Placeholder for an image */}
-            <div className="h-40 bg-gray-300 rounded-lg row-span-2"></div>
-            <div className="h-40 bg-gray-200 rounded-lg flex items-end p-4">
-                 <div className="bg-white p-2 rounded">
-                    <p className="font-bold text-xl text-emerald-700">5,000+</p>
-                    <p className="text-sm text-gray-600">Volunteers</p>
-                </div>
-            </div>
-             {/* Placeholder for an image */}
-            <div className="h-40 bg-gray-300 rounded-lg"></div>
-            <div className="h-40 bg-gray-300 rounded-lg col-start-1"></div>
-            {/* Placeholder for an image */}
-            <div className="h-40 bg-gray-200 rounded-lg flex items-end p-4">
-                <div className="bg-white p-2 rounded">
-                    <p className="font-bold text-xl text-emerald-700">150+</p>
-                    <p className="text-sm text-gray-600">Schools Supported</p>
-                </div>
-            </div>
-        </div>
+
+    {/* Animated stat box */}
+    <motion.div
+      className="h-40 bg-emerald-700 rounded-lg flex items-end p-4"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.1 }}
+    >
+      <div className="bg-white p-2 rounded">
+        <p className="font-bold text-xl text-emerald-700">1 Million+</p>
+        <p className="text-sm text-gray-600">Smiles Reached</p>
+      </div>
+    </motion.div>
+
+    {/* Image box */}
+    <motion.div
+      className="h-40 bg-gray-300 rounded-lg row-span-2 bg-cover bg-center"
+      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1576864333223-db90dadfb975?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2940')" }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
+    ></motion.div>
+
+    {/* Repeat same animation pattern for other boxes */}
+    <motion.div
+      className="h-40 bg-emerald-700 rounded-lg flex items-end p-4"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+    >
+      <div className="bg-white p-2 rounded">
+        <p className="font-bold text-xl text-emerald-700">5,000+</p>
+        <p className="text-sm text-gray-600">Volunteers</p>
+      </div>
+    </motion.div>
+
+    <motion.div
+      className="h-40 bg-gray-300 rounded-lg bg-cover bg-center"
+      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1633098272154-b97f6e147b00?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2070')" }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.4 }}
+    ></motion.div>
+
+    <motion.div
+      className="h-40 bg-gray-300 rounded-lg col-start-1 bg-cover bg-center"
+      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1600728587442-a21967362b74?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=2070')" }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.5 }}
+    ></motion.div>
+
+    <motion.div
+      className="h-40 bg-emerald-700 rounded-lg flex items-end p-4"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.6 }}
+    >
+      <div className="bg-white p-2 rounded">
+        <p className="font-bold text-xl text-emerald-700">150+</p>
+        <p className="text-sm text-gray-600">Schools Supported</p>
+      </div>
+    </motion.div>
+
+  </div>
       </section>
 
       {/* How We Make a Difference Section */}
@@ -195,7 +275,12 @@ const Home = () => {
         ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {featuredCampaigns.map(campaign => (
-                <div key={campaign.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col">
+                <motion.div
+  key={campaign.id}
+  className="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col"
+  whileHover={{ scale: 1.03 }}
+  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+>
                     {/* Image placeholder */}
                     <div className="h-48 bg-gray-200 w-full"></div>
                     <div className="p-6 flex-grow flex flex-col">
@@ -225,7 +310,7 @@ const Home = () => {
                             Donate to this Cause
                         </button>
                     </div>
-                </div>
+                </motion.div>
             ))}
             </div>
         )}
