@@ -57,6 +57,11 @@ export const donationAPI = {
 export const volunteerAPI = {
   applyVolunteer: (applicationData) => apiCall('/volunteers/apply', { method: 'POST', body: applicationData }),
   getUserApplications: () => userAPI.getUserVolunteerApplications(), // Alias for convenience
+  updateStatus: (volunteerId, status) => apiCall(`/volunteers/${volunteerId}/status`, { 
+    method: 'PATCH', 
+    body: { status } 
+  }),
+  getApplication: (volunteerId) => apiCall(`/volunteers/${volunteerId}`),
 };
 
 // Utility to check if user is authenticated
@@ -81,6 +86,7 @@ export const adminAPI = {
   getDonations: () => apiCall('/donations'),
   getVolunteerApplications: () => apiCall('/volunteers/applications'),
   getUsers: () => apiCall('/admin/users'), // You might want to create this endpoint
+  updateVolunteerStatus: (volunteerId, status) => volunteerAPI.updateStatus(volunteerId, status),
 };
 
 // User-specific API

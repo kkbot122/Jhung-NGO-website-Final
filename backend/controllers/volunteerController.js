@@ -64,3 +64,68 @@ export const getUserApplications = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+export const updateVolunteerStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  // Validate status
+  const validStatuses = ['pending', 'approved', 'rejected'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: 'Invalid status. Must be: pending, approved, or rejected' });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('volunteers')
+      .update({ 
+        status: status
+      })
+      .eq('id', id)
+      .select(`
+        *,
+        users(name, email, mobile),
+        campaigns(title)
+      `)
+      .single();
+
+    if (error) throw error;
+    
+    if (!data) {
+      return res.status(404).json({ error: 'Volunteer application not found' });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error('Update volunteer status error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getVolunteerApplication = async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const { data, error } = await supabase
+      .from('volunteers')
+      .select(`
+        *,
+        users(name, email, mobile),
+        campaigns(title, description)
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+    
+    if (!data) {
+      return res.status(404).json({ error: 'Volunteer application not found' });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error('Get volunteer application error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};

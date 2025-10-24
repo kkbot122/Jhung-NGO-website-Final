@@ -239,6 +239,18 @@ const handleDeleteCampaign = async () => {
       </div>
     );
   }
+  const handleUpdateVolunteerStatus = async (volunteerId, newStatus) => {
+  try {
+    await adminAPI.updateVolunteerStatus(volunteerId, newStatus);
+    alert(`Volunteer application ${newStatus} successfully!`);
+    
+    // Refresh the data
+    fetchData();
+  } catch (error) {
+    console.error('Failed to update volunteer status:', error);
+    alert('Failed to update volunteer status: ' + error.message);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -433,56 +445,74 @@ const handleDeleteCampaign = async () => {
 
             {/* Recent Volunteers */}
             <div className="bg-white shadow rounded-lg">
-              <div className="px-4 py-5 sm:px-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Volunteer Applications</h3>
-              </div>
-              <div className="border-t border-gray-200">
-                {volunteers && volunteers.length > 0 ? (
-                  <ul className="divide-y divide-gray-200">
-                    {volunteers.slice(0, 5).map((volunteer) => (
-                      <li key={volunteer.id} className="px-4 py-4 sm:px-6">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0">
-                              <Users className="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                {volunteer.users?.name || volunteer.user?.name || 'Volunteer'}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                {volunteer.campaigns?.title || volunteer.campaign?.title || 'General Campaign'}
-                              </div>
-                              <div className="text-sm text-gray-500 mt-1 max-w-md truncate">
-                                {volunteer.message}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              volunteer.status === 'approved' 
-                                ? 'bg-green-100 text-green-800'
-                                : volunteer.status === 'rejected'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {volunteer.status || 'Pending'}
-                            </span>
-                            <div className="text-sm text-gray-500 mt-1">
-                              {new Date(volunteer.applied_at || volunteer.created_at).toLocaleDateString()}
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="px-4 py-8 text-center text-gray-500">
-                    No volunteer applications yet
+  <div className="px-4 py-5 sm:px-6">
+    <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Volunteer Applications</h3>
+  </div>
+  <div className="border-t border-gray-200">
+    {volunteers && volunteers.length > 0 ? (
+      <ul className="divide-y divide-gray-200">
+        {volunteers.slice(0, 5).map((volunteer) => (
+          <li key={volunteer.id} className="px-4 py-4 sm:px-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <Users className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="ml-4">
+                  <div className="text-sm font-medium text-gray-900">
+                    {volunteer.users?.name || volunteer.user?.name || 'Volunteer'}
                   </div>
-                )}
+                  <div className="text-sm text-gray-500">
+                    {volunteer.campaigns?.title || volunteer.campaign?.title || 'General Campaign'}
+                  </div>
+                  <div className="text-sm text-gray-500 mt-1 max-w-md truncate">
+                    {volunteer.message}
+                  </div>
+                </div>
+              </div>
+              <div className="text-right">
+                <span className={`px-2 py-1 text-xs rounded-full ${
+                  volunteer.status === 'approved' 
+                    ? 'bg-green-100 text-green-800'
+                    : volunteer.status === 'rejected'
+                    ? 'bg-red-100 text-red-800'
+                    : 'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {volunteer.status || 'Pending'}
+                </span>
+                <div className="text-sm text-gray-500 mt-1">
+                  {new Date(volunteer.applied_at || volunteer.created_at).toLocaleDateString()}
+                </div>
+                <div className="flex space-x-1 mt-2">
+                  {volunteer.status !== 'approved' && (
+                    <button
+                      onClick={() => handleUpdateVolunteerStatus(volunteer.id, 'approved')}
+                      className="text-xs text-green-600 hover:text-green-800"
+                    >
+                      Approve
+                    </button>
+                  )}
+                  {volunteer.status !== 'rejected' && (
+                    <button
+                      onClick={() => handleUpdateVolunteerStatus(volunteer.id, 'rejected')}
+                      className="text-xs text-red-600 hover:text-red-800"
+                    >
+                      Reject
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div className="px-4 py-8 text-center text-gray-500">
+        No volunteer applications yet
+      </div>
+    )}
+  </div>
+</div>
           </div>
         )}
 
@@ -666,87 +696,121 @@ const handleDeleteCampaign = async () => {
 
         {/* Volunteers Tab */}
         {activeTab === 'volunteers' && (
-          <div className="px-4 py-6 sm:px-0">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">Volunteer Applications</h1>
-            
-            {loading ? (
-              <div className="text-center py-8">Loading volunteers...</div>
-            ) : (
-              <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Volunteer
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Campaign
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Message
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Applied Date
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {volunteers && volunteers.map((volunteer) => (
-                      <tr key={volunteer.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
-                            {volunteer.users?.name || volunteer.user?.name || 'Volunteer'}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {volunteer.users?.email || volunteer.user?.email || 'No email'}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {volunteer.users?.mobile || volunteer.user?.mobile || 'No phone'}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            {volunteer.campaigns?.title || volunteer.campaign?.title || 'Unknown Campaign'}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900 max-w-xs truncate">
-                            {volunteer.message || 'No message'}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(volunteer.applied_at || volunteer.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            volunteer.status === 'approved' 
-                              ? 'bg-green-100 text-green-800'
-                              : volunteer.status === 'rejected'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {volunteer.status || 'Pending'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                
-                {(!volunteers || volunteers.length === 0) && (
-                  <div className="px-6 py-12 text-center text-gray-500">
-                    <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No volunteer applications found</h3>
-                    <p className="text-gray-500">Volunteer applications will appear here once users apply to volunteer.</p>
+  <div className="px-4 py-6 sm:px-0">
+    <h1 className="text-2xl font-bold text-gray-900 mb-6">Volunteer Applications</h1>
+    
+    {loading ? (
+      <div className="text-center py-8">Loading volunteers...</div>
+    ) : (
+      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Volunteer
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Campaign
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Message
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Applied Date
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {volunteers && volunteers.map((volunteer) => (
+              <tr key={volunteer.id}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">
+                    {volunteer.users?.name || volunteer.user?.name || 'Volunteer'}
                   </div>
-                )}
-              </div>
-            )}
+                  <div className="text-sm text-gray-500">
+                    {volunteer.users?.email || volunteer.user?.email || 'No email'}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {volunteer.users?.mobile || volunteer.user?.mobile || 'No phone'}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900">
+                    {volunteer.campaigns?.title || volunteer.campaign?.title || 'Unknown Campaign'}
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-sm text-gray-900 max-w-xs">
+                    {volunteer.message || 'No message'}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(volunteer.applied_at || volunteer.created_at).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    volunteer.status === 'approved' 
+                      ? 'bg-green-100 text-green-800'
+                      : volunteer.status === 'rejected'
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {volunteer.status || 'Pending'}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div className="flex space-x-2">
+                    {volunteer.status !== 'approved' && (
+                      <button
+                        onClick={() => handleUpdateVolunteerStatus(volunteer.id, 'approved')}
+                        className="text-green-600 hover:text-green-900 transition-colors"
+                        title="Approve Volunteer"
+                      >
+                        Approve
+                      </button>
+                    )}
+                    {volunteer.status !== 'rejected' && (
+                      <button
+                        onClick={() => handleUpdateVolunteerStatus(volunteer.id, 'rejected')}
+                        className="text-red-600 hover:text-red-900 transition-colors"
+                        title="Reject Volunteer"
+                      >
+                        Reject
+                      </button>
+                    )}
+                    {volunteer.status !== 'pending' && (
+                      <button
+                        onClick={() => handleUpdateVolunteerStatus(volunteer.id, 'pending')}
+                        className="text-yellow-600 hover:text-yellow-900 transition-colors"
+                        title="Set to Pending"
+                      >
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        
+        {(!volunteers || volunteers.length === 0) && (
+          <div className="px-6 py-12 text-center text-gray-500">
+            <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No volunteer applications found</h3>
+            <p className="text-gray-500">Volunteer applications will appear here once users apply to volunteer.</p>
           </div>
         )}
+      </div>
+    )}
+  </div>
+)}
       </main>
 
       {/* Create Campaign Modal */}

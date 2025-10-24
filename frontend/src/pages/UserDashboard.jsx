@@ -207,7 +207,7 @@ const UserDashboard = () => {
           <StatCard 
             icon={Heart} 
             label="Total Donated" 
-            value={`$${getTotalDonated().toLocaleString()}`}
+            value={`₹${getTotalDonated().toLocaleString()}`}
             color="emerald"
           />
           <StatCard 
