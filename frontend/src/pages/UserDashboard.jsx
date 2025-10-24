@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Heart, Users, DollarSign, BookOpen, HandHeart, School, Plus } from 'lucide-react';
 import { campaignAPI, userAPI, donationAPI, volunteerAPI, getCurrentUser, isAuthenticated } from '../api/api.js';
+import PaymentModal from '../components/PaymentModal.jsx';
 
 
 // Helper component for consistent styling
@@ -22,9 +23,12 @@ const UserDashboard = () => {
   const [myVolunteerApplications, setMyVolunteerApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+
   const [donationAmount, setDonationAmount] = useState('');
   const [showDonationModal, setShowDonationModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   const [volunteerMessage, setVolunteerMessage] = useState('');
   const [showVolunteerModal, setShowVolunteerModal] = useState(false);
   const navigate = useNavigate();
@@ -82,21 +86,8 @@ const UserDashboard = () => {
       return;
     }
 
-    try {
-      await donationAPI.createDonation({
-        campaign_id: selectedCampaign.id,
-        amount: parseFloat(donationAmount),
-        note: `Donation for ${selectedCampaign.title}`
-      });
-      
-      alert('Donation successful! Thank you for your support.');
-      setShowDonationModal(false);
-      setDonationAmount('');
-      setSelectedCampaign(null);
-      fetchData();
-    } catch (error) {
-      alert('Donation failed: ' + error.message);
-    }
+    setShowDonationModal(false);
+    setShowPaymentModal(true);
   };
 
   const handleVolunteer = (campaign) => {
@@ -510,14 +501,14 @@ const UserDashboard = () => {
       </main>
 
       {/* Donation Modal */}
-      {showDonationModal && selectedCampaign && (
+       {showDonationModal && selectedCampaign && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-8 max-w-md w-full">
             <h3 className="text-xl font-bold mb-2">Donate to {selectedCampaign.title}</h3>
             <p className="text-gray-600 mb-6">Your contribution makes a difference!</p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Donation Amount ($)
+                Donation Amount (₹)
               </label>
               <input
                 type="number"
@@ -543,11 +534,26 @@ const UserDashboard = () => {
                 onClick={processDonation}
                 className="flex-1 px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition"
               >
-                Donate Now
+                Proceed to Pay
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* ADD Payment Modal */}
+      {showPaymentModal && selectedCampaign && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setSelectedCampaign(null);
+            setDonationAmount('');
+          }}
+          campaign={selectedCampaign}
+          donationAmount={donationAmount}
+          user={user}
+        />
       )}
 
       {/* Volunteer Modal */}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Heart, Users, DollarSign, ArrowRight, Target, BookOpen, School, HandHeart } from 'lucide-react';
 import { campaignAPI, isAuthenticated, getCurrentUser } from '../api/api.js';
+import PaymentModal from '../components/PaymentModal.jsx';
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -10,6 +11,11 @@ const Campaigns = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const navigate = useNavigate();
+
+  const [showDonationModal, setShowDonationModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [donationAmount, setDonationAmount] = useState('');
 
   const categories = [
     'All',
@@ -65,7 +71,19 @@ const Campaigns = () => {
       navigate('/login');
       return;
     }
-    navigate('/dashboard');
+    setSelectedCampaign(campaign);
+    setShowDonationModal(true);
+  };
+
+  const processDonation = async () => {
+    if (!donationAmount || parseFloat(donationAmount) <= 0) {
+      alert('Please enter a valid donation amount');
+      return;
+    }
+
+    // Close donation modal and open payment modal
+    setShowDonationModal(false);
+    setShowPaymentModal(true);
   };
 
   const handleVolunteerClick = (campaign) => {
@@ -317,6 +335,7 @@ const Campaigns = () => {
                   </div>
                 ))}
               </div>
+              
             ) : (
               <div className="text-center py-16">
                 <Target className="h-20 w-20 text-gray-400 mx-auto mb-6" />
@@ -409,6 +428,62 @@ const Campaigns = () => {
           </div>
         </div>
       </footer>
+
+       {/* ADD Donation Modal */}
+      {showDonationModal && selectedCampaign && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full">
+            <h3 className="text-xl font-bold mb-2">Donate to {selectedCampaign.title}</h3>
+            <p className="text-gray-600 mb-6">Your contribution makes a difference!</p>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Donation Amount (₹)
+              </label>
+              <input
+                type="number"
+                value={donationAmount}
+                onChange={(e) => setDonationAmount(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Enter amount"
+                min="1"
+              />
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDonationModal(false);
+                  setDonationAmount('');
+                  setSelectedCampaign(null);
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={processDonation}
+                className="flex-1 px-4 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-800 transition"
+              >
+                Proceed to Pay
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ADD Payment Modal */}
+      {showPaymentModal && selectedCampaign && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setSelectedCampaign(null);
+            setDonationAmount('');
+          }}
+          campaign={selectedCampaign}
+          donationAmount={donationAmount}
+          user={getCurrentUser()}
+        />
+      )}
     </div>
   );
 };

@@ -125,5 +125,14 @@ export const contactAPI = {
   }),
 };
 
+// Payment API
+export const paymentAPI = {
+  createOrder: (orderData) => apiCall('/api/payment/create-order', { 
+    method: 'POST', 
+    body: orderData 
+  }),
+  getPaymentStatus: (orderId) => apiCall(`/api/payment/status/${orderId}`),
+};
+
 
 export default apiCall;

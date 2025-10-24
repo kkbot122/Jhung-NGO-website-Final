@@ -7,7 +7,8 @@ import AdminDashboard from './pages/AdminDashboard.jsx';
 import UserDashboard from './pages/UserDashboard.jsx';
 import Campaigns from './pages/Campaigns.jsx';
 import About from './pages/About.jsx';
-import Supports from './pages/Supports.jsx'; 
+import Supports from './pages/Supports.jsx';
+import PaymentSuccess from './pages/PaymentSuccess.jsx';  
 
 function App() {
   return (
@@ -21,7 +22,8 @@ function App() {
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/campaigns" element={<Campaigns />} />
           <Route path="/about" element={<About />} /> 
-           <Route path="/supports" element={<Supports />} /> 
+          <Route path="/supports" element={<Supports />} /> 
+          <Route path="/payment-success" element={<PaymentSuccess />} />
         </Routes>
       </div>
     </Router>

@@ -3,7 +3,7 @@ import { Search, Heart, Users, ArrowRight, BookOpen, HandHeart, School, Plus } f
 import { campaignAPI, isAuthenticated, getCurrentUser, donationAPI } from '../api/api.js'; // Assuming all APIs are in one file
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from "framer-motion";
-
+import PaymentModal from '../components/PaymentModal.jsx';
 
 // Helper component for FAQ items
 const FaqItem = ({ question, children }) => {
@@ -47,6 +47,7 @@ const Home = () => {
   const [showDonationModal, setShowDonationModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [donationAmount, setDonationAmount] = useState('');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   // const [activeFilter, setActiveFilter] = useState('all');
   // const [searchTerm, setSearchTerm] = useState('');
   
@@ -74,8 +75,14 @@ const Home = () => {
       // You might want to redirect to login page here
       return;
     }
-    setSelectedCampaign(campaign);
-    setShowDonationModal(true);
+    if (!donationAmount || donationAmount <= 0) {
+      setSelectedCampaign(campaign);
+      setShowDonationModal(true);
+    } else {
+      // If amount is already set, proceed directly to payment
+      setSelectedCampaign(campaign);
+      setShowPaymentModal(true);
+    }
   };
 
   const processDonation = async () => {
@@ -83,20 +90,9 @@ const Home = () => {
       alert('Please enter a valid donation amount.');
       return;
     }
-    try {
-      await donationAPI.createDonation({
-        campaign_id: selectedCampaign.id,
-        amount: parseFloat(donationAmount),
-        note: `Donation for ${selectedCampaign.title}`
-      });
-      alert('Thank you for your generous donation!');
-      setShowDonationModal(false);
-      setDonationAmount('');
-      setSelectedCampaign(null);
-      // Optionally, refetch campaigns to show updated amounts
-    } catch (error) {
-      alert('Donation failed: ' + (error.message || 'Please try again.'));
-    }
+    // Close donation modal and open payment modal
+    setShowDonationModal(false);
+    setShowPaymentModal(true);
   };
   
   const progressPercentage = (raised, goal) => (raised / goal) * 100;
@@ -433,6 +429,21 @@ const Home = () => {
             </div>
           </div>
         </div>
+      )}
+
+       {/* ADD Payment Modal */}
+      {showPaymentModal && selectedCampaign && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setSelectedCampaign(null);
+            setDonationAmount('');
+          }}
+          campaign={selectedCampaign}
+          donationAmount={donationAmount}
+          user={getCurrentUser()}
+        />
       )}
     </div>
   );
