@@ -1,15 +1,60 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, MessageCircle, Shield, FileText, HelpCircle, Send, BookOpen, School, HandHeart } from 'lucide-react';
-import { isAuthenticated } from '../api/api';
+import { Mail, Phone, MapPin, MessageCircle, Shield, FileText, HelpCircle, Send, BookOpen, School, HandHeart, CheckCircle, AlertCircle } from 'lucide-react';
+import { isAuthenticated, contactAPI } from '../api/api';
 
 // FAQ Item Component
 
 const Supports = () => {
   const [activeFaq, setActiveFaq] = useState(null);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: 'General Inquiry',
+    message: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const toggleFaq = (index) => {
     setActiveFaq(activeFaq === index ? null : index);
+  };
+
+   const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+    // Clear errors when user starts typing
+    if (error) setError('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      await contactAPI.sendContactMessage(formData);
+      setSuccess(true);
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        subject: 'General Inquiry',
+        message: ''
+      });
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err) {
+      setError(err.message || 'Failed to send message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const contactMethods = [
@@ -70,11 +115,11 @@ const Supports = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="text-center py-16 px-6 bg-gray-50">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800">
+      <section className="text-center py-16 px-6 bg-emerald-700 text-white">
+        <h1 className="text-4xl md:text-5xl font-bold mb-6">
           How Can We Help You?
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <p className="text-xl max-w-2xl mx-auto">
           Get answers to your questions and find the support you need to make a difference through education.
         </p>
       </section>
@@ -109,69 +154,122 @@ const Supports = () => {
             })}
           </div>
 
-          {/* Contact Form */}
+          {/* Updated Contact Form */}
           <div className="bg-gray-50 rounded-lg border border-gray-200 p-8 max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Send us a Message</h3>
-            <form className="space-y-6">
+            
+            {/* Success Message */}
+            {success && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center">
+                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                  <div>
+                    <p className="text-green-800 font-medium">Message sent successfully!</p>
+                    <p className="text-green-700 text-sm">Thank you for contacting us. We'll get back to you soon.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div className="flex items-center">
+                  <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
+                  <p className="text-red-800">{error}</p>
+                </div>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
                   <input
                     type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    required
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="Enter your first name"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
                   <input
                     type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="Enter your last name"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   placeholder="Enter your email"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                <select className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                  <option>General Inquiry</option>
-                  <option>Donation Questions</option>
-                  <option>Volunteer Opportunities</option>
-                  <option>Partnership Inquiry</option>
-                  <option>Technical Support</option>
-                  <option>Other</option>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
+                <select 
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                >
+                  <option value="General Inquiry">General Inquiry</option>
+                  <option value="Donation Questions">Donation Questions</option>
+                  <option value="Volunteer Opportunities">Volunteer Opportunities</option>
+                  <option value="Partnership Inquiry">Partnership Inquiry</option>
+                  <option value="Technical Support">Technical Support</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
                 <textarea
+                  name="message"
                   rows="5"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   placeholder="Tell us how we can help you support education..."
                 ></textarea>
               </div>
               <button
                 type="submit"
-                className="w-full bg-emerald-700 text-white py-3 px-6 rounded-md hover:bg-emerald-800 transition flex items-center justify-center gap-2 font-medium"
+                disabled={loading}
+                className="w-full bg-emerald-700 text-white py-3 px-6 rounded-md hover:bg-emerald-800 transition flex items-center justify-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Send size={20} />
-                Send Message
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send size={20} />
+                    Send Message
+                  </>
+                )}
               </button>
             </form>
           </div>
         </div>
       </section>
-
-      {/* FAQ Section */}
-      
 
       {/* Privacy & Terms Sections */}
       <section className="py-16 bg-white">

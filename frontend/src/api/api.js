@@ -117,5 +117,13 @@ export const campaignAPI = {
   deleteCampaign: (campaignId) => apiCall(`/campaigns/${campaignId}`, { method: 'DELETE' }),
 };
 
+// Contact API
+export const contactAPI = {
+  sendContactMessage: (messageData) => apiCall('/api/contact', { 
+    method: 'POST', 
+    body: messageData 
+  }),
+};
+
 
 export default apiCall;
