@@ -305,8 +305,8 @@ const UserDashboard = () => {
                           {/* Progress Bar */}
                           <div className="mb-4">
                             <div className="flex justify-between text-sm text-gray-600 mb-1">
-                              <span>Raised: ${(campaign.collected || 0).toLocaleString()}</span>
-                              <span>Goal: ${campaign.goal.toLocaleString()}</span>
+                              <span>Raised: ₹{(campaign.collected || 0).toLocaleString()}</span>
+                              <span>Goal: ₹{campaign.goal.toLocaleString()}</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-2">
                               <div 
@@ -368,7 +368,7 @@ const UserDashboard = () => {
                           <p className="text-emerald-600">Thank you for your incredible support!</p>
                         </div>
                         <div className="text-3xl font-bold text-emerald-700">
-                          ${getTotalDonated().toLocaleString()}
+                          ₹{getTotalDonated().toLocaleString()}
                         </div>
                       </div>
                     </div>
@@ -405,7 +405,7 @@ const UserDashboard = () => {
                             </div>
                             <div className="text-right">
                               <div className="text-xl font-bold text-emerald-700">
-                                ${parseFloat(donation.amount).toLocaleString()}
+                                ₹{parseFloat(donation.amount).toLocaleString()}
                               </div>
                             </div>
                           </div>

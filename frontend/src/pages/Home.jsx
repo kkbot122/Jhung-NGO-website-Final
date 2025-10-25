@@ -304,8 +304,8 @@ const Home = () => {
                         
                         <div className="mb-4">
                             <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                <span>Raised: ${new Intl.NumberFormat().format(campaign.collected || 0)}</span>
-                                <span>Goal: ${new Intl.NumberFormat().format(campaign.goal)}</span>
+                                <span>Raised: ₹{new Intl.NumberFormat().format(campaign.collected || 0)}</span>
+                                <span>Goal: ₹{new Intl.NumberFormat().format(campaign.goal)}</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-2">
                                 <div 
@@ -398,7 +398,7 @@ const Home = () => {
             <p className="text-gray-600 mb-6">Your contribution makes a difference!</p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Donation Amount ($)
+                Donation Amount (₹)
               </label>
               <input
                 type="number"

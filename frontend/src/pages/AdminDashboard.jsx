@@ -343,7 +343,7 @@ const handleDeleteCampaign = async () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">Total Donations</dt>
-                        <dd className="text-lg font-medium text-gray-900">${totalDonations.toLocaleString()}</dd>
+                        <dd className="text-lg font-medium text-gray-900">₹{totalDonations.toLocaleString()}</dd>
                       </dl>
                     </div>
                   </div>
@@ -425,7 +425,7 @@ const handleDeleteCampaign = async () => {
                           </div>
                           <div className="text-right">
                             <div className="text-sm font-medium text-gray-900">
-                              ${parseFloat(donation.amount || 0).toLocaleString()}
+                              ₹{parseFloat(donation.amount || 0).toLocaleString()}
                             </div>
                             <div className="text-sm text-gray-500">
                               {new Date(donation.created_at).toLocaleDateString()}
@@ -570,10 +570,10 @@ const handleDeleteCampaign = async () => {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          ${campaign.goal?.toLocaleString() || '0'}
+                          ₹{campaign.goal?.toLocaleString() || '0'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          ${(campaign.collected || 0).toLocaleString()}
+                          ₹{(campaign.collected || 0).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -668,7 +668,7 @@ const handleDeleteCampaign = async () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-green-600">
-                            ${parseFloat(donation.amount || 0).toLocaleString()}
+                            ₹{parseFloat(donation.amount || 0).toLocaleString()}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -906,7 +906,7 @@ const handleDeleteCampaign = async () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Goal Amount ($) *
+                    Goal Amount (₹) *
                   </label>
                   <input
                     type="number"

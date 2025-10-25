@@ -18,6 +18,9 @@ app.use(cors({
   credentials: true
 }));
 
+// ✅ CRITICAL FIX: Webhook needs raw body BEFORE JSON middleware
+app.use('/api/payment/webhook', express.raw({type: 'application/json'}));
+
 // Apply JSON and URL-encoded parsers to ALL routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

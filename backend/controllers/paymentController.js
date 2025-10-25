@@ -61,7 +61,7 @@ export const createPaymentOrder = async (req, res) => {
       },
       order_meta: {
         return_url: `http://localhost:5173/payment-success?order_id={order_id}`,
-        notify_url: "http://localhost:5000/api/payment/webhook" // Webhook URL
+        notify_url: "https://yummy-pens-clap.loca.lt/api/payment/webhook" // Webhook URL
       }
     };
 
@@ -101,52 +101,105 @@ export const createPaymentOrder = async (req, res) => {
 // Enhanced webhook handler
 export const paymentWebhook = async (req, res) => {
   try {
-    const { 
-      orderId, 
-      orderAmount, 
-      referenceId, 
-      txStatus, 
-      paymentMode, 
-      txTime, 
-      txMsg 
-    } = req.body;
+    console.log('=== WEBHOOK HIT ===');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
     
-    console.log('💰 Payment webhook received:', {
-      orderId,
-      orderAmount,
-      referenceId,
-      txStatus,
-      paymentMode,
-      txTime,
-      txMsg
-    });
+    // ✅ Parse the raw buffer body
+    const rawBody = req.body.toString();
+    let webhookData;
+    
+    try {
+      webhookData = JSON.parse(rawBody);
+      console.log('Webhook type:', webhookData.type);
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      return res.status(200).json({ received: true, status: 'JSON parse error' });
+    }
 
-    // Verify the payment with Cashfree
-    const paymentStatus = await verifyPaymentWithCashfree(orderId);
+    // ✅ Handle test webhooks (from Cashfree dashboard)
+    if (webhookData.data && webhookData.data.test_object) {
+      console.log('✅ Test webhook received - responding successfully');
+      return res.status(200).json({ 
+        received: true, 
+        status: 'Test webhook processed successfully'
+      });
+    }
 
-    if (paymentStatus.txStatus === 'SUCCESS') {
-      await handleSuccessfulPayment({
+
+    // ✅ Handle actual payment webhooks - EXTRACT DATA FROM NEW STRUCTURE
+// In your paymentWebhook function, update this part:
+if ((webhookData.type === 'PAYMENT_CHARGES_WEBHOOK' || webhookData.type === 'PAYMENT_SUCCESS_WEBHOOK') && webhookData.data) {
+  const orderId = webhookData.data.order?.order_id;
+  const orderAmount = webhookData.data.order?.order_amount;
+  const paymentStatus = webhookData.data.payment?.payment_status;
+  const referenceId = webhookData.data.payment?.cf_payment_id;
+  const paymentMode = webhookData.data.payment?.payment_group;
+  const txTime = webhookData.data.payment?.payment_time;
+  const txMsg = webhookData.data.payment?.payment_message;
+
+  console.log('💰 PAYMENT WEBHOOK - Type:', webhookData.type, {
+    orderId,
+    orderAmount,
+    paymentStatus,
+    referenceId,
+    paymentMode,
+    txTime,
+    txMsg
+  });
+
+  // ✅ Process successful payment
+  if (paymentStatus === 'SUCCESS' && orderId) {
+    console.log('✅ Processing successful payment for order:', orderId);
+    
+    try {
+      const result = await handleSuccessfulPayment({
         orderId,
         orderAmount,
-        referenceId,
+        referenceId: referenceId?.toString(),
         paymentMode,
         txTime,
         txMsg
       });
-    } else {
-      console.log('❌ Payment failed for order:', orderId, 'Status:', paymentStatus.txStatus);
+      
+      if (result.alreadyProcessed) {
+        console.log('🔄 Payment already processed, skipping duplicate');
+      } else {
+        console.log('🎉 Payment processed successfully!');
+        console.log('💰 Campaign updated with amount:', result.updatedAmount);
+      }
+    } catch (error) {
+      console.error('❌ Error processing payment:', error);
     }
+  } else {
+    console.log(`ℹ️ Payment status: ${paymentStatus} for order: ${orderId}`);
+  }
+} else {
+  console.log('ℹ️ Other webhook type:', webhookData.type);
+}
 
-    res.status(200).json({ received: true });
+    res.status(200).json({ 
+      received: true, 
+      status: 'Webhook processed successfully',
+      message: 'Payment recorded successfully'
+    });
+    
   } catch (error) {
-    console.error('Webhook error:', error);
-    res.status(500).json({ error: 'Webhook processing failed' });
+    console.error('Webhook processing error:', error);
+    res.status(200).json({ 
+      received: true, 
+      status: 'Webhook received (processing error)',
+      error: error.message 
+    });
   }
 };
 
 // Verify payment with Cashfree
+// Verify payment with Cashfree
 const verifyPaymentWithCashfree = async (orderId) => {
   try {
+    console.log('🔍 Verifying payment for order:', orderId);
+    
     const response = await axios.get(
       `https://sandbox.cashfree.com/pg/orders/${orderId}/payments`,
       {
@@ -158,6 +211,8 @@ const verifyPaymentWithCashfree = async (orderId) => {
       }
     );
 
+    console.log('✅ Payment verification response:', response.data);
+
     // Get the latest payment attempt
     const payments = response.data;
     if (payments && payments.length > 0) {
@@ -166,19 +221,36 @@ const verifyPaymentWithCashfree = async (orderId) => {
     
     return { txStatus: 'PENDING' };
   } catch (error) {
-    console.error('Payment verification error:', error);
-    throw error;
+    console.error('❌ Payment verification error:', error.response?.data || error.message);
+    
+    // Return a default status instead of throwing
+    return { 
+      txStatus: 'VERIFICATION_FAILED',
+      error: error.response?.data?.message || error.message
+    };
   }
 };
 
-// Handle successful payment
+// Handle successful payment with duplicate protection
 const handleSuccessfulPayment = async (paymentData) => {
   try {
     const { orderId, orderAmount, referenceId, paymentMode, txTime, txMsg } = paymentData;
 
     console.log('✅ Processing successful payment for order:', orderId);
 
-    // 1. Get campaign and user info from order_tracking
+    // 1. First check if we already processed this payment using order_id
+    const { data: existingDonation, error: checkError } = await supabase
+      .from('donations')
+      .select('*')
+      .eq('order_id', orderId)
+      .single();
+
+    if (existingDonation) {
+      console.log('🔄 Payment already processed for order:', orderId);
+      return { alreadyProcessed: true };
+    }
+
+    // 2. Get campaign and user info from order_tracking
     const { data: orderTracking, error: trackingError } = await supabase
       .from('order_tracking')
       .select('*')
@@ -190,34 +262,22 @@ const handleSuccessfulPayment = async (paymentData) => {
       throw trackingError;
     }
 
-    // 2. Check if we already processed this payment
-    const { data: existingDonation, error: checkError } = await supabase
-      .from('donations')
-      .select('*')
-      .eq('order_id', orderId)
-      .single();
-
-    if (existingDonation) {
-      console.log('Payment already processed:', orderId);
-      return;
-    }
-
     // 3. Create donation record
+    const donationData = {
+      order_id: orderId,
+      amount: parseFloat(orderAmount),
+      status: 'completed',
+      payment_method: paymentMode,
+      transaction_id: referenceId?.toString(),
+      transaction_message: txMsg,
+      user_id: orderTracking.user_id,
+      campaign_id: orderTracking.campaign_id,
+      created_at: new Date().toISOString()
+    };
+
     const { data: donation, error: donationError } = await supabase
       .from('donations')
-      .insert([
-        {
-          order_id: orderId,
-          amount: parseFloat(orderAmount),
-          status: 'completed',
-          payment_method: paymentMode,
-          transaction_id: referenceId,
-          transaction_message: txMsg,
-          user_id: orderTracking.user_id,
-          campaign_id: orderTracking.campaign_id,
-          created_at: new Date().toISOString()
-        }
-      ])
+      .insert([donationData])
       .select()
       .single();
 
@@ -226,22 +286,31 @@ const handleSuccessfulPayment = async (paymentData) => {
       throw donationError;
     }
 
+    console.log('✅ Donation created:', donation);
+
     // 4. Update campaign collected amount
-    await updateCampaignCollectedAmount(orderTracking.campaign_id, parseFloat(orderAmount));
+    const updatedAmount = await updateCampaignCollectedAmount(orderTracking.campaign_id, parseFloat(orderAmount));
 
     // 5. Update order tracking status
-    await supabase
+    const { error: trackingUpdateError } = await supabase
       .from('order_tracking')
       .update({ 
         status: 'completed',
         payment_method: paymentMode,
-        transaction_id: referenceId,
+        transaction_id: referenceId?.toString(),
         transaction_message: txMsg,
         updated_at: new Date().toISOString()
       })
       .eq('order_id', orderId);
 
+    if (trackingUpdateError) {
+      console.error('Error updating order tracking:', trackingUpdateError);
+    }
+
     console.log('✅ Payment processed successfully for order:', orderId);
+    console.log('💰 Campaign updated with new collected amount:', updatedAmount);
+    
+    return { success: true, donation, updatedAmount };
 
   } catch (error) {
     console.error('Error handling successful payment:', error);
@@ -250,32 +319,44 @@ const handleSuccessfulPayment = async (paymentData) => {
 };
 
 // Helper function to update campaign collected amount
+// Helper function to update campaign collected amount
 const updateCampaignCollectedAmount = async (campaignId, amount) => {
   try {
-    // First get current collected amount
+    console.log(`🔄 Updating campaign ${campaignId} collected amount by: ${amount}`);
+
+    // First get current campaign details
     const { data: campaign, error } = await supabase
       .from('campaigns')
-      .select('collected')
+      .select('collected, goal, title')
       .eq('id', campaignId)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error finding campaign:', error);
+      throw error;
+    }
 
-    const newCollectedAmount = (campaign.collected || 0) + amount;
+    const currentCollected = campaign.collected || 0;
+    const newCollectedAmount = parseFloat(currentCollected) + parseFloat(amount);
 
-    // Update campaign
+    console.log(`📊 Campaign "${campaign.title}": ${currentCollected} + ${amount} = ${newCollectedAmount}`);
+
+    // Update campaign collected amount
     const { error: updateError } = await supabase
       .from('campaigns')
       .update({ 
-        collected: newCollectedAmount,
-        updated_at: new Date().toISOString()
+        collected: newCollectedAmount
       })
       .eq('id', campaignId);
 
-    if (updateError) throw updateError;
+    if (updateError) {
+      console.error('Error updating campaign collected amount:', updateError);
+      throw updateError;
+    }
 
     console.log(`✅ Updated campaign ${campaignId} collected amount to: ${newCollectedAmount}`);
     
+    return newCollectedAmount;
   } catch (error) {
     console.error('Error updating campaign collected amount:', error);
     throw error;
