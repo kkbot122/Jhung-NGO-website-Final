@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Heart, Users, ArrowRight, BookOpen, HandHeart, School, Plus } from 'lucide-react';
+import { Search, Heart, Users, ArrowRight, BookOpen, HandHeart, School, Plus, Shield } from 'lucide-react';
 import { campaignAPI, isAuthenticated, getCurrentUser, donationAPI } from '../api/api.js'; // Assuming all APIs are in one file
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from "framer-motion";
@@ -141,33 +141,35 @@ const Home = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="text-center py-20 px-6 bg-gray-50">
-        <motion.h1 
-        initial={{ opacity: 0, y: 10 }}
+<section className="text-center py-20 px-6 bg-gray-50">
+  <motion.h1 
+    initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.8, ease: "easeOut" }}
-    className="text-4xl md:text-6xl font-bold mb-4 text-gray-800">
-          Give the gift of learning
-        </motion.h1>
-         <motion.p
+    className="text-4xl md:text-6xl font-bold mb-4 text-gray-800"
+  >
+    Empowering Differently-Abled Lives
+  </motion.h1>
+  <motion.p
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
     className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
   >
-    Your help provides children with books, supplies, and safe classrooms. Join us in our mission to ensure that every child has the opportunity to succeed.
+    Your support provides vocational training, social integration, and independent living opportunities. 
+    Join us in creating an inclusive society where every individual can thrive with dignity.
   </motion.p>
-          <motion.button
+  <motion.button
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
     onClick={() => handleDonateClick(campaigns[0])}
     className="px-8 py-3 bg-emerald-700 text-white rounded-md hover:bg-emerald-800 transition font-medium"
   >
-    Donate Now
+    Support Our Mission
   </motion.button>
 
-        {/* Image placeholders and stats */}
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 text-left">
+  {/* Image placeholders and stats */}
+  <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 text-left">
 
     {/* Animated stat box */}
     <motion.div
@@ -177,8 +179,8 @@ const Home = () => {
       transition={{ duration: 0.6, delay: 0.1 }}
     >
       <div className="bg-white p-2 rounded">
-        <p className="font-bold text-xl text-emerald-700">1 Million+</p>
-        <p className="text-sm text-gray-600">Smiles Reached</p>
+        <p className="font-bold text-xl text-emerald-700">2,000+</p>
+        <p className="text-sm text-gray-600">Students Trained</p>
       </div>
     </motion.div>
 
@@ -199,8 +201,8 @@ const Home = () => {
       transition={{ duration: 0.6, delay: 0.3 }}
     >
       <div className="bg-white p-2 rounded">
-        <p className="font-bold text-xl text-emerald-700">5,000+</p>
-        <p className="text-sm text-gray-600">Volunteers</p>
+        <p className="font-bold text-xl text-emerald-700">72</p>
+        <p className="text-sm text-gray-600">Marriages Arranged</p>
       </div>
     </motion.div>
 
@@ -227,43 +229,52 @@ const Home = () => {
       transition={{ duration: 0.6, delay: 0.6 }}
     >
       <div className="bg-white p-2 rounded">
-        <p className="font-bold text-xl text-emerald-700">150+</p>
-        <p className="text-sm text-gray-600">Schools Supported</p>
+        <p className="font-bold text-xl text-emerald-700">20</p>
+        <p className="text-sm text-gray-600">Residential Students</p>
       </div>
     </motion.div>
 
   </div>
-      </section>
+</section>
 
-      {/* How We Make a Difference Section */}
-      <section className="bg-emerald-800 text-white py-20 px-6">
-        <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12">How We Make A Difference?</h2>
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="flex flex-col items-center">
-              <div className="bg-white/10 p-4 rounded-full mb-4">
-                <School size={32} />
-              </div>
-              <h3 className="font-semibold text-xl mb-2">Build & Support Schools</h3>
-              <p className="text-emerald-200">We fund the construction and renovation of schools in underprivileged areas.</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-white/10 p-4 rounded-full mb-4">
-                <BookOpen size={32} />
-              </div>
-              <h3 className="font-semibold text-xl mb-2">Provide Essential Resources</h3>
-              <p className="text-emerald-200">From textbooks to technology, we ensure students have the tools they need.</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-white/10 p-4 rounded-full mb-4">
-                <HandHeart size={32} />
-              </div>
-              <h3 className="font-semibold text-xl mb-2">Relationships & Programs</h3>
-              <p className="text-emerald-200">Our mentorship and after-school programs help children thrive.</p>
-            </div>
-          </div>
+{/* How We Make a Difference Section */}
+<section className="bg-emerald-800 text-white py-20 px-6">
+  <div className="max-w-5xl mx-auto text-center">
+    <h2 className="text-3xl md:text-4xl font-bold mb-12">How We Make A Difference?</h2>
+    <div className="grid md:grid-cols-3 gap-12">
+      <div className="flex flex-col items-center">
+        <div className="bg-white/10 p-4 rounded-full mb-4">
+          <School size={32} />
         </div>
-      </section>
+        <h3 className="font-semibold text-xl mb-2">Vocational Training</h3>
+        <p className="text-emerald-200">
+          We provide skill development in mobile repairing, tailoring, beauty parlour, and data entry 
+          with government-certified courses and stipends.
+        </p>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="bg-white/10 p-4 rounded-full mb-4">
+          <Heart size={32} />
+        </div>
+        <h3 className="font-semibold text-xl mb-2">Social Integration</h3>
+        <p className="text-emerald-200">
+          We arrange matrimonial meets and support marriages of differently-abled couples 
+          with full traditional ceremonies and household necessities.
+        </p>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="bg-white/10 p-4 rounded-full mb-4">
+          <Shield size={32} />
+        </div>
+        <h3 className="font-semibold text-xl mb-2">Comprehensive Support</h3>
+        <p className="text-emerald-200">
+          From UDID card distribution to housing assistance and mobility aids, we provide 
+          end-to-end support for dignified living.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Featured Campaigns Section */}
       <section className="max-w-7xl mx-auto px-6 py-20">

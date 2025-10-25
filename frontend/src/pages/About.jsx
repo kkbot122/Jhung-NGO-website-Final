@@ -1,49 +1,73 @@
 import { Link } from 'react-router-dom';
-import { Users, Target, Heart, Award, Globe, Shield, Star, BookOpen, School, HandHeart } from 'lucide-react';
+import { Users, Target, Heart, Award, Globe, Shield, Star, BookOpen, School, HandHeart, Phone, Mail, MapPin } from 'lucide-react';
 import { isAuthenticated } from '../api/api.js';
 
 const About = () => {
-  const teamMembers = [
+  const awards = [
+    "Global Icon Award",
+    "National Youth Awareness Award", 
+    "National Achievement Award",
+    "Dr. A.P.J. Abdul Kalam Youth Inspiration Award",
+    "Social Pride Award",
+    "Society Excellence Award",
+    "Social Ambassador Award",
+    "Social Gem Award – 1",
+    "Social Gem Award – 2",
+    "Bharari (Flight) Award"
+  ];
+
+  const achievements = [
     {
-      name: 'Sarah Johnson',
-      role: 'Founder & CEO',
-      image: '👩‍💼',
-      bio: 'Former social worker with 10+ years of experience in community development'
+      icon: Users,
+      title: "Residential Facility",
+      description: "Provides residential facilities for 20 differently-abled students."
     },
     {
-      name: 'Michael Chen',
-      role: 'Operations Director',
-      image: '👨‍💼',
-      bio: 'Expert in nonprofit management and strategic planning'
+      icon: Heart,
+      title: "Matrimonial Support", 
+      description: "Arranged 72 marriages of differently-abled couples with full traditional ceremonies."
     },
     {
-      name: 'Dr. Maria Rodriguez',
-      role: 'Medical Programs Lead',
-      image: '👩‍⚕️',
-      bio: 'Medical professional dedicated to healthcare accessibility'
+      icon: School,
+      title: "Vocational Training",
+      description: "Trained 2,000+ students in mobile repairing, beauty parlour, tailoring, and data entry."
     },
     {
-      name: 'David Kim',
-      role: 'Education Coordinator',
-      image: '👨‍🏫',
-      bio: 'Passionate about creating educational opportunities for all'
+      icon: BookOpen,
+      title: "Business Guidance",
+      description: "Thousands of youth started their own businesses through free guidance programs."
+    },
+    {
+      icon: Shield,
+      title: "UDID Cards",
+      description: "Distributed UDID cards to 300+ differently-abled individuals through special camps."
+    },
+    {
+      icon: Target,
+      title: "Housing Assistance",
+      description: "350 beneficiaries received ₹1 lakh each for housing under Chikhli Housing Scheme."
     }
   ];
 
-  const impactStats = [
-    { number: '50,000+', label: 'Lives Impacted', icon: Users },
-    { number: '120+', label: 'Projects Completed', icon: Target },
-    { number: '$2.5M+', label: 'Funds Raised', icon: Heart },
-    { number: '35+', label: 'Communities Served', icon: Globe }
-  ];
-
-  const partners = [
-    { name: 'Global Health Initiative', logo: '🏥', type: 'Healthcare Partner' },
-    { name: 'Education for All Foundation', logo: '📚', type: 'Education Partner' },
-    { name: 'Green Earth Alliance', logo: '🌱', type: 'Environmental Partner' },
-    { name: 'Community First Org', logo: '🤝', type: 'Community Development' },
-    { name: 'Future Leaders Program', logo: '🌟', type: 'Youth Empowerment' },
-    { name: 'Safe Shelter Network', logo: '🏠', type: 'Housing Partner' }
+  const contactInfo = [
+    {
+      icon: Phone,
+      title: "Call Us",
+      details: "+91 9011452216 / +91 8788535200",
+      description: "Speak directly with our team"
+    },
+    {
+      icon: Mail,
+      title: "Email Us", 
+      details: "jhunjsanstha@gmail.com",
+      description: "Send us your queries and we'll respond promptly"
+    },
+    {
+      icon: MapPin,
+      title: "Visit Us",
+      details: "Pimpri-Chinchwad, Maharashtra",
+      description: "Stop by our headquarters"
+    }
   ];
 
   return (
@@ -52,12 +76,12 @@ const About = () => {
       <header className="sticky top-0 bg-white z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center">
-  <img 
-    src="/NGO-Logo.jpeg" 
-    alt="Jhung Divyang Aashram" 
-    className="h-13 w-auto"
-  />
-</Link>
+            <img 
+              src="/NGO-Logo.jpeg" 
+              alt="Jhung Divyang Aashram" 
+              className="h-13 w-auto"
+            />
+          </Link>
           <nav className="hidden md:flex gap-8 text-md text-gray-700">
             <Link to="/" className="hover:text-emerald-700 font-medium">Home</Link>
             <Link to="/campaigns" className="hover:text-emerald-700 font-medium">Campaigns</Link>
@@ -81,63 +105,60 @@ const About = () => {
       {/* Hero Section */}
       <section className="text-center py-20 px-6 bg-emerald-700 text-white">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">
-          About Jhung Divyang Asharam
+          About Jhunj Divyang Sanstha Ashram
         </h1>
         <p className="text-xl max-w-3xl mx-auto">
-          Creating lasting change through compassion, community, and collective action. 
-          Together, we're building a brighter future through education and opportunity.
+          Empowering differently-abled individuals through education, vocational training, and social support since 2014.
         </p>
       </section>
 
-      {/* Our Story Section */}
+      {/* Founder Section */}
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Story</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              From humble beginnings to creating meaningful impact in communities worldwide
-            </p>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Founder</h2>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="flex items-center gap-4 mb-6">
                 <div className="bg-emerald-100 p-4 rounded-full">
-                  <Heart className="h-8 w-8 text-emerald-600" />
+                  <Star className="h-8 w-8 text-emerald-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800">From Vision to Global Movement</h3>
+                <h3 className="text-2xl font-bold text-gray-800">Raju Kadappa Hirve</h3>
               </div>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                HopeForAll was founded in 2015 with a simple yet powerful vision: to create a world where 
-                every child has access to quality education and every community has the tools to build a better future.
+              <p className="text-gray-600 mb-4 text-lg leading-relaxed">
+                <strong>Founder & President</strong> - Jhunj Divyang Sanstha Ashram Training Center
+              </p>
+              <p className="text-gray-600 mb-4 text-lg leading-relaxed">
+                <strong>Education:</strong> Passed 11th Grade, Pune<br/>
+                <strong>Occupation:</strong> Mobile Repairing Shop Owner<br/>
+                <strong>Passion:</strong> Social Work & Empowerment
               </p>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                What started as a small community initiative has grown into a global movement, bringing together 
-                thousands of volunteers, donors, and partners who share our commitment to positive change through education.
+                Raju Hirve's life journey of struggle and determination has been captured in the book 
+                <strong> "Sangharshashi Don Haath" (Fighting Against Struggles)</strong>, inspiring countless individuals 
+                to overcome challenges and create positive change.
               </p>
               <p className="text-gray-600 text-lg leading-relaxed">
-                Our journey has been guided by the belief that education is the most powerful tool for 
-                transforming lives and building sustainable communities.
+                He personally provides mobile repairing training to students and has been honored with 
+                over 40 awards for his exceptional contribution to disability welfare.
               </p>
             </div>
             <div className="bg-gray-50 p-8 rounded-lg border border-gray-200">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="text-center p-6 bg-white rounded-lg border border-gray-200">
-                  <div className="text-3xl font-bold text-emerald-700 mb-2">2015</div>
-                  <div className="text-gray-700 font-medium">Founded</div>
-                </div>
-                <div className="text-center p-6 bg-white rounded-lg border border-gray-200">
-                  <div className="text-3xl font-bold text-blue-600 mb-2">50+</div>
-                  <div className="text-gray-700 font-medium">Countries Reached</div>
-                </div>
-                <div className="text-center p-6 bg-white rounded-lg border border-gray-200">
-                  <div className="text-3xl font-bold text-purple-600 mb-2">5,000+</div>
-                  <div className="text-gray-700 font-medium">Volunteers</div>
-                </div>
-                <div className="text-center p-6 bg-white rounded-lg border border-gray-200">
-                  <div className="text-3xl font-bold text-orange-600 mb-2">120+</div>
-                  <div className="text-gray-700 font-medium">Projects</div>
-                </div>
+              <div className="text-center mb-6">
+                <Award className="h-16 w-16 text-emerald-600 mx-auto mb-4" />
+                <h4 className="text-xl font-bold text-gray-800">Awards & Recognition</h4>
+              </div>
+              <div className="grid grid-cols-1 gap-4 max-h-80 overflow-y-auto">
+                {awards.map((award, index) => (
+                  <div key={index} className="bg-white p-4 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-3">
+                      <Star className="h-5 w-5 text-yellow-500 flex-shrink-0" />
+                      <span className="text-gray-700 font-medium">{award}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -154,8 +175,8 @@ const About = () => {
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Our Mission</h3>
               <p className="text-gray-600 text-lg leading-relaxed">
-                To empower communities through education, providing access to learning resources, 
-                building schools, and creating opportunities for children to reach their full potential.
+                To empower differently-abled individuals through comprehensive support including education, 
+                vocational training, social integration, and independent living opportunities.
               </p>
             </div>
             <div className="text-center bg-white p-8 rounded-lg border border-gray-200">
@@ -164,161 +185,131 @@ const About = () => {
               </div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Our Vision</h3>
               <p className="text-gray-600 text-lg leading-relaxed">
-                A world where every child has access to quality education, every community has the 
-                resources to thrive, and education becomes the foundation for lasting positive change.
+                A society where differently-abled individuals are fully integrated, self-reliant, 
+                and empowered to lead dignified lives with equal opportunities and social acceptance.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Our Team Section */}
+      {/* Achievements Section */}
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Team</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Achievements</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Meet the dedicated professionals who drive our mission forward with passion and expertise
+              Transforming lives through dedicated service and innovative programs since 2014.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {teamMembers.map((member, index) => (
-              <div key={index} className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="p-6 text-center">
-                  <div className="text-5xl mb-4">{member.image}</div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{member.name}</h3>
-                  <div className="text-emerald-600 font-medium mb-3">{member.role}</div>
-                  <p className="text-gray-600 text-sm leading-relaxed">{member.bio}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <div className="bg-emerald-50 rounded-lg p-8 border border-emerald-200">
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Join Our Team</h3>
-              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                We're always looking for passionate individuals who want to make a difference. 
-                Whether you're interested in volunteering or career opportunities, we'd love to hear from you.
-              </p>
-              <Link
-                to="/register"
-                className="inline-flex items-center px-6 py-3 bg-emerald-700 text-white rounded-md hover:bg-emerald-800 transition font-medium"
-              >
-                <Users className="mr-2" size={20} />
-                Become a Volunteer
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Impact Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Impact</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Measuring success through the lives we've touched and the communities we've transformed
-            </p>
-          </div>
-
-          {/* Impact Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-            {impactStats.map((stat, index) => {
-              const IconComponent = stat.icon;
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {achievements.map((achievement, index) => {
+              const IconComponent = achievement.icon;
               return (
-                <div key={index} className="text-center bg-white p-6 rounded-lg border border-gray-200">
-                  <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div key={index} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+                  <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
                     <IconComponent className="h-8 w-8 text-emerald-600" />
                   </div>
-                  <div className="text-2xl font-bold text-gray-800 mb-2">{stat.number}</div>
-                  <div className="text-gray-600 font-medium">{stat.label}</div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-3">{achievement.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{achievement.description}</p>
                 </div>
               );
             })}
           </div>
 
-          {/* Impact Stories */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <div className="bg-emerald-100 p-3 rounded-full inline-flex mb-4">
-                <School className="h-6 w-6 text-emerald-600" />
-              </div>
-              <h4 className="text-xl font-bold text-gray-800 mb-3">Education Transformation</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Built and supported 45 schools, providing quality education to over 15,000 children 
-                in underserved communities across three continents.
-              </p>
+          {/* Additional Impact Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-emerald-50 rounded-lg p-8 border border-emerald-200">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-emerald-700 mb-2">20</div>
+              <div className="text-gray-700 font-medium">Residential Students</div>
             </div>
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <div className="bg-blue-100 p-3 rounded-full inline-flex mb-4">
-                <BookOpen className="h-6 w-6 text-blue-600" />
-              </div>
-              <h4 className="text-xl font-bold text-gray-800 mb-3">Learning Resources</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Distributed over 100,000 educational materials and established 25 libraries 
-                to support continuous learning and literacy development.
-              </p>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-emerald-700 mb-2">72</div>
+              <div className="text-gray-700 font-medium">Marriages Arranged</div>
             </div>
-            <div className="bg-white rounded-lg p-6 border border-gray-200">
-              <div className="bg-purple-100 p-3 rounded-full inline-flex mb-4">
-                <HandHeart className="h-6 w-6 text-purple-600" />
-              </div>
-              <h4 className="text-xl font-bold text-gray-800 mb-3">Community Development</h4>
-              <p className="text-gray-600 leading-relaxed">
-                Implemented teacher training programs and parent education initiatives, 
-                creating sustainable educational ecosystems in rural areas.
-              </p>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-emerald-700 mb-2">2,000+</div>
+              <div className="text-gray-700 font-medium">Students Trained</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-emerald-700 mb-2">40+</div>
+              <div className="text-gray-700 font-medium">Awards Received</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Partners Section */}
-      {/* <section className="py-16 bg-white">
+      {/* COVID Response Section */}
+      <section className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Partners</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Collaborating with leading organizations to maximize our impact and reach
-            </p>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">COVID-19 Response</h2>
           </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-12">
-            {partners.map((partner, index) => (
-              <div key={index} className="text-center group">
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-emerald-300 transition-colors h-full flex flex-col items-center justify-center">
-                  <div className="text-3xl mb-3">{partner.logo}</div>
-                  <h4 className="font-bold text-gray-800 text-sm mb-1">{partner.name}</h4>
-                  <p className="text-gray-500 text-xs">{partner.type}</p>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Support During Pandemic</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="bg-emerald-100 p-2 rounded-full mt-1">
+                    <Shield className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800">Safety Distribution</h4>
+                    <p className="text-gray-600">Distributed masks and sanitizers among differently-abled individuals</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="bg-emerald-100 p-2 rounded-full mt-1">
+                    <HandHeart className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800">Livelihood Support</h4>
+                    <p className="text-gray-600">Provided mask-making kits and tailoring materials worth ₹5,000 each to 100 individuals</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="bg-emerald-100 p-2 rounded-full mt-1">
+                    <School className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800">Online Training</h4>
+                    <p className="text-gray-600">Conducted free online mobile repairing training for 350 students in collaboration with GTT Foundation</p>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <div className="bg-emerald-50 rounded-lg p-8 border border-emerald-200 max-w-2xl mx-auto">
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Become a Partner</h3>
-              <p className="text-gray-600 mb-6">
-                Join our network of change-makers and help us expand our reach. 
-                Together, we can create even greater impact through education.
-              </p>
-              <button className="px-6 py-3 border border-emerald-700 text-emerald-700 rounded-md hover:bg-emerald-700 hover:text-white transition font-medium">
-                Partner With Us
-              </button>
+            </div>
+            <div className="bg-white p-8 rounded-lg border border-gray-200">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Get In Touch</h3>
+              <div className="space-y-6">
+                {contactInfo.map((contact, index) => {
+                  const IconComponent = contact.icon;
+                  return (
+                    <div key={index} className="flex items-center gap-4">
+                      <div className="bg-emerald-100 p-3 rounded-full">
+                        <IconComponent className="h-6 w-6 text-emerald-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-800">{contact.title}</h4>
+                        <p className="text-gray-600 text-sm">{contact.description}</p>
+                        <p className="text-emerald-700 font-medium">{contact.details}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
-      </section> */}
+      </section>
 
       {/* CTA Section */}
       <section className="py-16 bg-emerald-800 text-white">
         <div className="max-w-4xl mx-auto text-center px-6">
-          <h2 className="text-3xl font-bold mb-6">Ready to Make a Difference?</h2>
+          <h2 className="text-3xl font-bold mb-6">Join Our Mission</h2>
           <p className="text-xl text-emerald-100 mb-8">
-            Join thousands of supporters who are creating positive change through education
+            Support our efforts to empower differently-abled individuals and create an inclusive society
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -326,7 +317,7 @@ const About = () => {
               className="px-8 py-4 bg-white text-emerald-700 rounded-md hover:bg-gray-100 transition font-medium flex items-center justify-center gap-3 text-lg"
             >
               <Heart size={20} />
-              Support
+              Support Our Work
             </Link>
             <Link
               to="/register"
@@ -343,8 +334,8 @@ const About = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
-              <h3 className="text-xl font-bold text-emerald-700 mb-4">Jhung Divyang Sanstha</h3>
-              <p className="text-sm text-gray-600">Educating children for a brighter future.</p>
+              <h3 className="text-xl font-bold text-emerald-700 mb-4">Jhunj Divyang Sanstha</h3>
+              <p className="text-sm text-gray-600">Empowering differently-abled individuals since 2014</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4 text-gray-800">Get Involved</h4>
@@ -373,7 +364,7 @@ const About = () => {
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} Jhung Divyang Sanstha. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Jhunj Divyang Sanstha Ashram Training Center. All rights reserved.</p>
           </div>
         </div>
       </footer>
