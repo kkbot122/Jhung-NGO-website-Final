@@ -50,7 +50,7 @@ const Login = () => {
         {/* Left Side: Image and Welcome Text */}
         <div className="hidden md:flex md:w-1/2 bg-emerald-700 text-white p-12 flex-col justify-between">
             <div>
-                <a href="/" className="text-2xl font-bold">HopeForAll</a>
+                <a href="/" className="text-2xl font-bold">Jhung Divyang Sanstha</a>
                 <p className="mt-4 text-emerald-200">
                     Welcome back! Your support continues to build brighter futures. Thank you for being part of our mission.
                 </p>

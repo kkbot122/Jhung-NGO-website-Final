@@ -69,21 +69,14 @@ const Supports = () => {
       icon: Phone,
       title: "Call Us",
       description: "Speak directly with our support team",
-      details: "+1 (555) 123-HELP",
-      link: "tel:+15551234357"
-    },
-    {
-      icon: MessageCircle,
-      title: "Live Chat",
-      description: "Get instant help during business hours",
-      details: "Mon-Fri, 9AM-6PM EST",
-      link: "#chat"
+      details: "+91 9011452216",
+      link: "tel:+91 9011452216"
     },
     {
       icon: MapPin,
       title: "Visit Us",
       description: "Stop by our headquarters",
-      details: "123 Hope Street, City, State 12345",
+      details: "Pimpri-Chinchwad",
       link: "https://maps.google.com"
     }
   ];
@@ -93,8 +86,14 @@ const Supports = () => {
       {/* Header */}
       <header className="sticky top-0 bg-white z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-emerald-700">HopeForAll</Link>
-          <nav className="hidden md:flex gap-8 text-sm text-gray-700">
+          <Link to="/" className="flex items-center">
+  <img 
+    src="/NGO-Logo.jpeg" 
+    alt="Jhung Divyang Aashram" 
+    className="h-13 w-auto"
+  />
+</Link>
+          <nav className="hidden md:flex gap-8 text-md text-gray-700">
             <Link to="/" className="hover:text-emerald-700 font-medium">Home</Link>
             <Link to="/campaigns" className="hover:text-emerald-700 font-medium">Campaigns</Link>
             <Link to="/about" className="hover:text-emerald-700 font-medium">About</Link>
@@ -126,150 +125,155 @@ const Supports = () => {
 
       {/* Contact Section */}
       <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Contact Us</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Reach out to us through any of these methods. We're here to help you support education!
-            </p>
-          </div>
+  <div className="max-w-6xl mx-auto px-6">
+    <div className="text-center mb-12">
+      <h2 className="text-3xl font-bold text-gray-800 mb-4">Contact Us</h2>
+      <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        Reach out to us through any of these methods. We're here to help you support education!
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {contactMethods.map((method, index) => {
-              const IconComponent = method.icon;
-              return (
-                <a
-                  key={index}
-                  href={method.link}
-                  className="bg-white rounded-lg border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow group"
-                >
-                  <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-200 transition-colors">
-                    <IconComponent className="h-8 w-8 text-emerald-600" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{method.title}</h3>
-                  <p className="text-gray-600 mb-3 text-sm">{method.description}</p>
-                  <p className="text-emerald-700 font-medium">{method.details}</p>
-                </a>
-              );
-            })}
-          </div>
-
-          {/* Updated Contact Form */}
-          <div className="bg-gray-50 rounded-lg border border-gray-200 p-8 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Send us a Message</h3>
-            
-            {/* Success Message */}
-            {success && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-                  <div>
-                    <p className="text-green-800 font-medium">Message sent successfully!</p>
-                    <p className="text-green-700 text-sm">Thank you for contacting us. We'll get back to you soon.</p>
-                  </div>
-                </div>
+    {/* Centered contact methods grid - FIXED */}
+    <div className="flex justify-center mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-fit">
+        {contactMethods.map((method, index) => {
+          const IconComponent = method.icon;
+          return (
+            <a
+              key={index}
+              href={method.link}
+              className="bg-white rounded-lg border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow group w-64"
+            >
+              <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-200 transition-colors">
+                <IconComponent className="h-8 w-8 text-emerald-600" />
               </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{method.title}</h3>
+              <p className="text-gray-600 mb-3 text-sm">{method.description}</p>
+              <p className="text-emerald-700 font-medium">{method.details}</p>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+
+    {/* Centered contact form */}
+    <div className="flex justify-center">
+      <div className="bg-gray-50 rounded-lg border border-gray-200 p-8 w-full max-w-2xl">
+        <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Send us a Message</h3>
+        
+        {/* Success Message */}
+        {success && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center">
+              <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+              <div>
+                <p className="text-green-800 font-medium">Message sent successfully!</p>
+                <p className="text-green-700 text-sm">Thank you for contacting us. We'll get back to you soon.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center">
+              <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
+              <p className="text-red-800">{error}</p>
+            </div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                placeholder="Enter your first name"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                placeholder="Enter your last name"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              placeholder="Enter your email"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
+            <select 
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            >
+              <option value="General Inquiry">General Inquiry</option>
+              <option value="Donation Questions">Donation Questions</option>
+              <option value="Volunteer Opportunities">Volunteer Opportunities</option>
+              <option value="Partnership Inquiry">Partnership Inquiry</option>
+              <option value="Technical Support">Technical Support</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+            <textarea
+              name="message"
+              rows="5"
+              value={formData.message}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              placeholder="Tell us how we can help you support education..."
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-emerald-700 text-white py-3 px-6 rounded-md hover:bg-emerald-800 transition flex items-center justify-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send size={20} />
+                Send Message
+              </>
             )}
-
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
-                  <p className="text-red-800">{error}</p>
-                </div>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Enter your first name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="Enter your last name"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Enter your email"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
-                <select 
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                >
-                  <option value="General Inquiry">General Inquiry</option>
-                  <option value="Donation Questions">Donation Questions</option>
-                  <option value="Volunteer Opportunities">Volunteer Opportunities</option>
-                  <option value="Partnership Inquiry">Partnership Inquiry</option>
-                  <option value="Technical Support">Technical Support</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
-                <textarea
-                  name="message"
-                  rows="5"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Tell us how we can help you support education..."
-                ></textarea>
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-emerald-700 text-white py-3 px-6 rounded-md hover:bg-emerald-800 transition flex items-center justify-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send size={20} />
-                    Send Message
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Privacy & Terms Sections */}
       <section className="py-16 bg-white">
@@ -285,7 +289,7 @@ const Supports = () => {
               </div>
               <div className="space-y-4 text-gray-600">
                 <p className="leading-relaxed">
-                  At HopeForAll, we are committed to protecting your privacy and ensuring the security of your personal information.
+                  At Jhung Divyang Sanstha, we are committed to protecting your privacy and ensuring the security of your personal information.
                 </p>
                 <h3 className="font-semibold text-gray-800 mt-4">Information We Collect</h3>
                 <ul className="list-disc list-inside space-y-1 ml-4">
@@ -298,9 +302,6 @@ const Supports = () => {
                   We never sell your personal information to third parties. Read our full privacy policy for complete details.
                 </p>
               </div>
-              <button className="mt-6 text-emerald-700 hover:text-emerald-800 font-medium">
-                Read Full Privacy Policy →
-              </button>
             </div>
 
             {/* Terms of Service */}
@@ -313,7 +314,7 @@ const Supports = () => {
               </div>
               <div className="space-y-4 text-gray-600">
                 <p className="leading-relaxed">
-                  By using HopeForAll's services, you agree to comply with and be bound by the following terms and conditions.
+                  By using Jhung Divyang Sanstha's services, you agree to comply with and be bound by the following terms and conditions.
                 </p>
                 <h3 className="font-semibold text-gray-800 mt-4">User Responsibilities</h3>
                 <ul className="list-disc list-inside space-y-1 ml-4">
@@ -329,9 +330,6 @@ const Supports = () => {
                   <li>Tax receipts are provided for eligible donations</li>
                 </ul>
               </div>
-              <button className="mt-6 text-emerald-700 hover:text-emerald-800 font-medium">
-                Read Full Terms of Service →
-              </button>
             </div>
           </div>
 
@@ -370,7 +368,7 @@ const Supports = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
-              <h3 className="text-xl font-bold text-emerald-700 mb-4">HopeForAll</h3>
+              <h3 className="text-xl font-bold text-emerald-700 mb-4">Jhung Divyang Sanstha</h3>
               <p className="text-sm text-gray-600">Educating children for a brighter future.</p>
             </div>
             <div>
@@ -400,7 +398,7 @@ const Supports = () => {
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} HopeForAll. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Jhung Divyang Sanstha. All rights reserved.</p>
           </div>
         </div>
       </footer>

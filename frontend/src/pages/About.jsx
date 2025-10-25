@@ -51,8 +51,14 @@ const About = () => {
       {/* Header */}
       <header className="sticky top-0 bg-white z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-emerald-700">HopeForAll</Link>
-          <nav className="hidden md:flex gap-8 text-sm text-gray-700">
+          <Link to="/" className="flex items-center">
+  <img 
+    src="/NGO-Logo.jpeg" 
+    alt="Jhung Divyang Aashram" 
+    className="h-13 w-auto"
+  />
+</Link>
+          <nav className="hidden md:flex gap-8 text-md text-gray-700">
             <Link to="/" className="hover:text-emerald-700 font-medium">Home</Link>
             <Link to="/campaigns" className="hover:text-emerald-700 font-medium">Campaigns</Link>
             <Link to="/about" className="text-emerald-700 font-medium border-b-2 border-emerald-700 pb-1">About</Link>
@@ -75,7 +81,7 @@ const About = () => {
       {/* Hero Section */}
       <section className="text-center py-20 px-6 bg-emerald-700 text-white">
         <h1 className="text-4xl md:text-5xl font-bold mb-6">
-          About HopeForAll
+          About Jhung Divyang Asharam
         </h1>
         <p className="text-xl max-w-3xl mx-auto">
           Creating lasting change through compassion, community, and collective action. 
@@ -337,7 +343,7 @@ const About = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
-              <h3 className="text-xl font-bold text-emerald-700 mb-4">HopeForAll</h3>
+              <h3 className="text-xl font-bold text-emerald-700 mb-4">Jhung Divyang Sanstha</h3>
               <p className="text-sm text-gray-600">Educating children for a brighter future.</p>
             </div>
             <div>
@@ -367,7 +373,7 @@ const About = () => {
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} HopeForAll. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Jhung Divyang Sanstha. All rights reserved.</p>
           </div>
         </div>
       </footer>

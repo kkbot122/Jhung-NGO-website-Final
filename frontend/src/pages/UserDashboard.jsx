@@ -168,7 +168,13 @@ const UserDashboard = () => {
       {/* Header */}
       <header className="sticky top-0 bg-white z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-emerald-700">HopeForAll</Link>
+          <Link to="/" className="flex items-center">
+  <img 
+    src="/NGO-Logo.jpeg" 
+    alt="Jhung Divyang Aashram" 
+    className="h-13 w-auto"
+  />
+</Link>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-700">Welcome, {user.name || 'User'}</span>
             <button

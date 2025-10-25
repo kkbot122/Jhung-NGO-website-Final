@@ -199,7 +199,7 @@ const Register = () => {
         {/* Left Side: Image and Welcome Text */}
         <div className="hidden md:flex md:w-1/2 bg-emerald-700 text-white p-12 flex-col justify-between">
             <div>
-                <a href="/" className="text-2xl font-bold">HopeForAll</a>
+                <a href="/" className="text-2xl font-bold">Jhung Divyang Sanstha</a>
                 <p className="mt-4 text-emerald-200">
                     Join a community dedicated to creating a brighter future through education. Your journey to make a difference starts here.
                 </p>
