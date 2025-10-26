@@ -14,7 +14,7 @@ import paymentRoutes from './routes/payments.js';
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'https://jhung-ngo-website-final.vercel.app/'],
   credentials: true
 }));
 
