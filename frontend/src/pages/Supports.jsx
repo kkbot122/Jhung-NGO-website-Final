@@ -289,7 +289,7 @@ const Supports = () => {
               </div>
               <div className="space-y-4 text-gray-600">
                 <p className="leading-relaxed">
-                  At Jhung Divyang Sanstha, we are committed to protecting your privacy and ensuring the security of your personal information.
+                  At Zunj Divyang Sanstha, we are committed to protecting your privacy and ensuring the security of your personal information.
                 </p>
                 <h3 className="font-semibold text-gray-800 mt-4">Information We Collect</h3>
                 <ul className="list-disc list-inside space-y-1 ml-4">
@@ -314,7 +314,7 @@ const Supports = () => {
               </div>
               <div className="space-y-4 text-gray-600">
                 <p className="leading-relaxed">
-                  By using Jhung Divyang Sanstha's services, you agree to comply with and be bound by the following terms and conditions.
+                  By using Zunj Divyang Sanstha's services, you agree to comply with and be bound by the following terms and conditions.
                 </p>
                 <h3 className="font-semibold text-gray-800 mt-4">User Responsibilities</h3>
                 <ul className="list-disc list-inside space-y-1 ml-4">
@@ -368,7 +368,7 @@ const Supports = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
-              <h3 className="text-xl font-bold text-emerald-700 mb-4">Jhung Divyang Sanstha</h3>
+              <h3 className="text-xl font-bold text-emerald-700 mb-4">Zunj Divyang Sanstha</h3>
               <p className="text-sm text-gray-600">Educating children for a brighter future.</p>
             </div>
             <div>
@@ -398,7 +398,7 @@ const Supports = () => {
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} Jhung Divyang Sanstha. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Zunj Divyang Sanstha. All rights reserved.</p>
           </div>
         </div>
       </footer>

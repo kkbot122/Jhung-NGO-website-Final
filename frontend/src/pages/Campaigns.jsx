@@ -382,7 +382,7 @@ const Campaigns = () => {
                 className="px-8 py-4 bg-white text-emerald-700 rounded-md hover:bg-gray-100 transition font-medium flex items-center justify-center gap-3 text-lg"
               >
                 <Heart size={20} />
-                Join Jhung Divyang Sanstha
+                Join Zunj Divyang Sanstha
               </Link>
               <Link
                 to="/about"
@@ -400,7 +400,7 @@ const Campaigns = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
-              <h3 className="text-xl font-bold text-emerald-700 mb-4">Jhung Divyang Sanstha</h3>
+              <h3 className="text-xl font-bold text-emerald-700 mb-4">Zunj Divyang Sanstha</h3>
               <p className="text-sm text-gray-600">Educating children for a brighter future.</p>
             </div>
             <div>
@@ -430,7 +430,7 @@ const Campaigns = () => {
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} Jhung Divyang Sanstha. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Zunj Divyang Sanstha. All rights reserved.</p>
           </div>
         </div>
       </footer>
