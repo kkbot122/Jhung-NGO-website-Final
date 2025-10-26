@@ -60,8 +60,8 @@ export const createPaymentOrder = async (req, res) => {
         customer_phone: customerPhone || '9999999999',
       },
       order_meta: {
-        return_url: `http://localhost:5173/payment-success?order_id={order_id}`,
-        notify_url: "https://yummy-pens-clap.loca.lt/api/payment/webhook" // Webhook URL
+        return_url: process.env.PAYMENT_RETURN_URL || `http://localhost:5173/payment-success?order_id={order_id}`,
+        notify_url: process.env.PAYMENT_NOTIFY_URL || "https://yummy-pens-clap.loca.lt/api/payment/webhook" // Webhook URL
       }
     };
 
