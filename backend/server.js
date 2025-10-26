@@ -14,7 +14,7 @@ import paymentRoutes from './routes/payments.js';
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://jhung-ngo-website-final.vercel.app/'],
+  origin: ['http://localhost:5173', 'https://jhung-ngo-website-final.vercel.app'],
   credentials: true
 }));
 
@@ -36,5 +36,5 @@ app.use('/api/payment', paymentRoutes);
 
 app.get('/', (req, res) => res.send({ ok: true }));
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server listening on ${PORT}`));

@@ -11,6 +11,6 @@ export const authenticate = (req, res, next) => {
     req.user = payload; // { id, email, role }
     next();
   } catch (err) {
-    return res.status(401).json({ error: 'Invalid token' });
+    return res.status(403).json({ error: 'Invalid token' });
   }
 };

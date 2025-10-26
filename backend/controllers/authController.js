@@ -1,8 +1,6 @@
 import { supabase } from '../config/supabase.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config();
 
 const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10');
 
