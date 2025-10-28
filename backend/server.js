@@ -8,7 +8,6 @@ import campaignRoutes from './routes/campaigns.js';
 import volunteerRoutes from './routes/volunteers.js';
 import donationRoutes from './routes/donations.js';
 import userRoutes from './routes/user.js';
-import contactRoutes from './routes/contact.js';
 import paymentRoutes from './routes/payments.js';
 
 const app = express();
@@ -31,7 +30,6 @@ app.use('/campaigns', campaignRoutes);
 app.use('/volunteers', volunteerRoutes);
 app.use('/donations', donationRoutes);
 app.use('/api/user', userRoutes);
-app.use('/api', contactRoutes);
 app.use('/api/payment', paymentRoutes);
 
 app.get('/', (req, res) => res.send({ ok: true }));

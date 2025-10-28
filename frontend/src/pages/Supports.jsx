@@ -1,16 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, MessageCircle, Shield, FileText, HelpCircle, Send, BookOpen, School, HandHeart, CheckCircle, AlertCircle } from 'lucide-react';
-import { isAuthenticated, contactAPI } from '../api/api';
-
-// FAQ Item Component
+import { Mail, Phone, MapPin, Shield, FileText, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { isAuthenticated } from '../api/api';
+import emailjs from '@emailjs/browser';
 
 const Supports = () => {
-  const [activeFaq, setActiveFaq] = useState(null);
+  const form = useRef();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
+    user_name: '',
+    user_email: '',
     subject: 'General Inquiry',
     message: ''
   });
@@ -18,11 +16,7 @@ const Supports = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
-  const toggleFaq = (index) => {
-    setActiveFaq(activeFaq === index ? null : index);
-  };
-
-   const handleChange = (e) => {
+  const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -36,25 +30,54 @@ const Supports = () => {
     setLoading(true);
     setError('');
 
-    try {
-      await contactAPI.sendContactMessage(formData);
-      setSuccess(true);
-      // Reset form
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        subject: 'General Inquiry',
-        message: ''
+    const templateParams = {
+      user_name: formData.user_name,
+      user_email: formData.user_email,
+      subject: formData.subject,
+      message: formData.message,
+      time: new Date().toLocaleString(),
+      reply_to: formData.user_email,
+    };
+
+    emailjs
+      .send("service_2omxh0p", "template_w4ybae2", templateParams, {
+        publicKey: "WmDYYbRKkAkgkCHNE",
+      })
+      .then(
+        (response) => {
+          console.log("SUCCESS!", response);
+          setSuccess(true);
+          // Reset form
+          setFormData({
+            user_name: '',
+            user_email: '',
+            subject: 'General Inquiry',
+            message: ''
+          });
+          
+          // Reset success message after 5 seconds
+          setTimeout(() => setSuccess(false), 5000);
+        },
+        (error) => {
+          console.log("FAILED...", error);
+          
+          // Error handling
+          if (error.text) {
+            if (error.text.includes("Invalid")) {
+              setError("Invalid EmailJS configuration. Please check your Service ID, Template ID, and Public Key.");
+            } else if (error.text.includes("template")) {
+              setError("Template not found. Please check your Template ID in EmailJS.");
+            } else {
+              setError(`Error: ${error.text}`);
+            }
+          } else {
+            setError("Network error. Please check your connection.");
+          }
+        }
+      )
+      .finally(() => {
+        setLoading(false);
       });
-      
-      // Reset success message after 5 seconds
-      setTimeout(() => setSuccess(false), 5000);
-    } catch (err) {
-      setError(err.message || 'Failed to send message. Please try again.');
-    } finally {
-      setLoading(false);
-    }
   };
 
   const contactMethods = [
@@ -62,8 +85,8 @@ const Supports = () => {
       icon: Mail,
       title: "Email Us",
       description: "Send us an email and we'll respond within 24 hours",
-      details: "support@hopeforall.org",
-      link: "mailto:support@hopeforall.org"
+      details: "jhunjsanstha@gmail.com",
+      link: "mailto:jhunjsanstha@gmail.com"
     },
     {
       icon: Phone,
@@ -87,12 +110,12 @@ const Supports = () => {
       <header className="sticky top-0 bg-white z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center">
-  <img 
-    src="/NGO-Logo.jpeg" 
-    alt="Jhung Divyang Aashram" 
-    className="h-13 w-auto"
-  />
-</Link>
+            <img 
+              src="/NGO-Logo.jpeg" 
+              alt="Jhung Divyang Aashram" 
+              className="h-13 w-auto"
+            />
+          </Link>
           <nav className="hidden md:flex gap-8 text-md text-gray-700">
             <Link to="/" className="hover:text-emerald-700 font-medium">Home</Link>
             <Link to="/campaigns" className="hover:text-emerald-700 font-medium">Campaigns</Link>
@@ -125,155 +148,144 @@ const Supports = () => {
 
       {/* Contact Section */}
       <section className="py-16 bg-white">
-  <div className="max-w-6xl mx-auto px-6">
-    <div className="text-center mb-12">
-      <h2 className="text-3xl font-bold text-gray-800 mb-4">Contact Us</h2>
-      <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-        Reach out to us through any of these methods. We're here to help you support education!
-      </p>
-    </div>
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Contact Us</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Reach out to us through any of these methods. We're here to help you support education!
+            </p>
+          </div>
 
-    {/* Centered contact methods grid - FIXED */}
-    <div className="flex justify-center mb-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-fit">
-        {contactMethods.map((method, index) => {
-          const IconComponent = method.icon;
-          return (
-            <a
-              key={index}
-              href={method.link}
-              className="bg-white rounded-lg border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow group w-64"
-            >
-              <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-200 transition-colors">
-                <IconComponent className="h-8 w-8 text-emerald-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{method.title}</h3>
-              <p className="text-gray-600 mb-3 text-sm">{method.description}</p>
-              <p className="text-emerald-700 font-medium">{method.details}</p>
-            </a>
-          );
-        })}
-      </div>
-    </div>
-
-    {/* Centered contact form */}
-    <div className="flex justify-center">
-      <div className="bg-gray-50 rounded-lg border border-gray-200 p-8 w-full max-w-2xl">
-        <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Send us a Message</h3>
-        
-        {/* Success Message */}
-        {success && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-            <div className="flex items-center">
-              <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
-              <div>
-                <p className="text-green-800 font-medium">Message sent successfully!</p>
-                <p className="text-green-700 text-sm">Thank you for contacting us. We'll get back to you soon.</p>
-              </div>
+          {/* Centered contact methods grid */}
+          <div className="flex justify-center mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-fit">
+              {contactMethods.map((method, index) => {
+                const IconComponent = method.icon;
+                return (
+                  <a
+                    key={index}
+                    href={method.link}
+                    className="bg-white rounded-lg border border-gray-200 p-6 text-center hover:shadow-lg transition-shadow group w-64"
+                  >
+                    <div className="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-200 transition-colors">
+                      <IconComponent className="h-8 w-8 text-emerald-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">{method.title}</h3>
+                    <p className="text-gray-600 mb-3 text-sm">{method.description}</p>
+                    <p className="text-emerald-700 font-medium">{method.details}</p>
+                  </a>
+                );
+              })}
             </div>
           </div>
-        )}
 
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <div className="flex items-center">
-              <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
-              <p className="text-red-800">{error}</p>
-            </div>
-          </div>
-        )}
+          {/* Centered contact form */}
+          <div className="flex justify-center">
+            <div className="bg-gray-50 rounded-lg border border-gray-200 p-8 w-full max-w-2xl">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Send us a Message</h3>
+              
+              {/* Success Message */}
+              {success && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-center">
+                    <CheckCircle className="h-5 w-5 text-green-600 mr-3" />
+                    <div>
+                      <p className="text-green-800 font-medium">Message sent successfully!</p>
+                      <p className="text-green-700 text-sm">Thank you for contacting us. We'll get back to you soon.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">First Name *</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                placeholder="Enter your first name"
-              />
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-center">
+                    <AlertCircle className="h-5 w-5 text-red-600 mr-3" />
+                    <p className="text-red-800">{error}</p>
+                  </div>
+                </div>
+              )}
+
+              <form ref={form} onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                    <input
+                      type="text"
+                      name="user_name"
+                      value={formData.user_name}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                    <input
+                      type="email"
+                      name="user_email"
+                      value={formData.user_email}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      placeholder="Enter your email"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
+                  <select 
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  >
+                    <option value="General Inquiry">General Inquiry</option>
+                    <option value="Donation Questions">Donation Questions</option>
+                    <option value="Volunteer Opportunities">Volunteer Opportunities</option>
+                    <option value="Partnership Inquiry">Partnership Inquiry</option>
+                    <option value="Technical Support">Technical Support</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+                  <textarea
+                    name="message"
+                    rows="5"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    placeholder="Tell us how we can help you support education..."
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-emerald-700 text-white py-3 px-6 rounded-md hover:bg-emerald-800 transition flex items-center justify-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={20} />
+                      Send Message
+                    </>
+                  )}
+                </button>
+              </form>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Last Name *</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                placeholder="Enter your last name"
-              />
-            </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              placeholder="Enter your email"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
-            <select 
-              name="subject"
-              value={formData.subject}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            >
-              <option value="General Inquiry">General Inquiry</option>
-              <option value="Donation Questions">Donation Questions</option>
-              <option value="Volunteer Opportunities">Volunteer Opportunities</option>
-              <option value="Partnership Inquiry">Partnership Inquiry</option>
-              <option value="Technical Support">Technical Support</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
-            <textarea
-              name="message"
-              rows="5"
-              value={formData.message}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              placeholder="Tell us how we can help you support education..."
-            ></textarea>
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-emerald-700 text-white py-3 px-6 rounded-md hover:bg-emerald-800 transition flex items-center justify-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                Sending...
-              </>
-            ) : (
-              <>
-                <Send size={20} />
-                Send Message
-              </>
-            )}
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
+        </div>
+      </section>
 
       {/* Privacy & Terms Sections */}
       <section className="py-16 bg-white">
@@ -289,7 +301,7 @@ const Supports = () => {
               </div>
               <div className="space-y-4 text-gray-600">
                 <p className="leading-relaxed">
-                  At Zunj Divyang Sanstha, we are committed to protecting your privacy and ensuring the security of your personal information.
+                  At JHUNJ Divyang Sanstha, we are committed to protecting your privacy and ensuring the security of your personal information.
                 </p>
                 <h3 className="font-semibold text-gray-800 mt-4">Information We Collect</h3>
                 <ul className="list-disc list-inside space-y-1 ml-4">
@@ -314,7 +326,7 @@ const Supports = () => {
               </div>
               <div className="space-y-4 text-gray-600">
                 <p className="leading-relaxed">
-                  By using Zunj Divyang Sanstha's services, you agree to comply with and be bound by the following terms and conditions.
+                  By using JHUNJ Divyang Sanstha's services, you agree to comply with and be bound by the following terms and conditions.
                 </p>
                 <h3 className="font-semibold text-gray-800 mt-4">User Responsibilities</h3>
                 <ul className="list-disc list-inside space-y-1 ml-4">
@@ -332,9 +344,6 @@ const Supports = () => {
               </div>
             </div>
           </div>
-
-          {/* Additional Legal Links */}
-
         </div>
       </section>
 
@@ -347,14 +356,14 @@ const Supports = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="mailto:support@hopeforall.org"
+              href="mailto:jhunjsanstha@gmail.com"
               className="px-8 py-4 bg-white text-emerald-700 rounded-md hover:bg-gray-100 transition font-medium flex items-center justify-center gap-3 text-lg"
             >
               <Mail size={20} />
               Email Support
             </a>
             <a
-              href="tel:+15551234357"
+              href="tel:+919011452216"
               className="px-8 py-4 border-2 border-white text-white rounded-md hover:bg-white hover:text-emerald-800 transition font-medium"
             >
               Call Now
@@ -368,8 +377,8 @@ const Supports = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-1">
-              <h3 className="text-xl font-bold text-emerald-700 mb-4">Zunj Divyang Sanstha</h3>
-              <p className="text-sm text-gray-600">Educating children for a brighter future.</p>
+              <h3 className="text-xl font-bold text-emerald-700 mb-4">JHUNJ Divyang Sanstha</h3>
+              <p className="text-sm text-gray-600">Empowering differently-abled individuals since 2014</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4 text-gray-800">Get Involved</h4>
@@ -398,7 +407,7 @@ const Supports = () => {
             </div>
           </div>
           <div className="border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-            <p>© {new Date().getFullYear()} Zunj Divyang Sanstha. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} JHUNJ Divyang Sanstha. All rights reserved.</p>
           </div>
         </div>
       </footer>
