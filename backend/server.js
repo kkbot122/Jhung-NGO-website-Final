@@ -13,7 +13,7 @@ import paymentRoutes from './routes/payments.js';
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://jhung-ngo-website-final.vercel.app'],
+  origin: ['http://localhost:5173', 'https://zunj-sanstha.vercel.app'],
   credentials: true
 }));
 
