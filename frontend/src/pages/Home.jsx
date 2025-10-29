@@ -4,6 +4,7 @@ import { campaignAPI, isAuthenticated, getCurrentUser, donationAPI } from '../ap
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from "framer-motion";
 import PaymentModal from '../components/PaymentModal.jsx';
+import CountUp from '../components/CountUp.jsx';
 
 // Helper component for FAQ items
 const FaqItem = ({ question, children }) => {
@@ -179,7 +180,9 @@ const Home = () => {
       transition={{ duration: 0.6, delay: 0.1 }}
     >
       <div className="bg-white p-2 rounded">
-        <p className="font-bold text-xl text-emerald-700">2,000+</p>
+        <p className="font-bold text-xl text-emerald-700">
+          <CountUp to={2000} from={0} duration={2} separator="," />+
+        </p>
         <p className="text-sm text-gray-600">Students Trained</p>
       </div>
     </motion.div>
@@ -201,7 +204,9 @@ const Home = () => {
       transition={{ duration: 0.6, delay: 0.3 }}
     >
       <div className="bg-white p-2 rounded">
-        <p className="font-bold text-xl text-emerald-700">72</p>
+        <p className="font-bold text-xl text-emerald-700">
+          <CountUp to={72} from={0} duration={2} />
+        </p>
         <p className="text-sm text-gray-600">Marriages Arranged</p>
       </div>
     </motion.div>
@@ -229,7 +234,9 @@ const Home = () => {
       transition={{ duration: 0.6, delay: 0.6 }}
     >
       <div className="bg-white p-2 rounded">
-        <p className="font-bold text-xl text-emerald-700">20</p>
+        <p className="font-bold text-xl text-emerald-700">
+          <CountUp to={20} from={0} duration={2} />
+        </p>
         <p className="text-sm text-gray-600">Residential Students</p>
       </div>
     </motion.div>
