@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Users, Target, Heart, Award, Globe, Shield, Star, BookOpen, School, HandHeart, Phone, Mail, MapPin } from 'lucide-react';
 import { isAuthenticated } from '../api/api.js';
+import CountUp from '../components/CountUp.jsx';
 
 const About = () => {
   const awards = [
@@ -221,19 +222,27 @@ const About = () => {
           {/* Additional Impact Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-emerald-50 rounded-lg p-8 border border-emerald-200">
             <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-700 mb-2">20</div>
+              <div className="text-2xl font-bold text-emerald-700 mb-2">
+                <CountUp to={20} from={0} duration={2} />
+              </div>
               <div className="text-gray-700 font-medium">Residential Students</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-700 mb-2">72</div>
+              <div className="text-2xl font-bold text-emerald-700 mb-2">
+                <CountUp to={72} from={0} duration={2} />
+              </div>
               <div className="text-gray-700 font-medium">Marriages Arranged</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-700 mb-2">2,000+</div>
+              <div className="text-2xl font-bold text-emerald-700 mb-2">
+                <CountUp to={2000} from={0} duration={2} separator="," />+
+              </div>
               <div className="text-gray-700 font-medium">Students Trained</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-700 mb-2">40+</div>
+              <div className="text-2xl font-bold text-emerald-700 mb-2">
+                <CountUp to={40} from={0} duration={2} />+
+              </div>
               <div className="text-gray-700 font-medium">Awards Received</div>
             </div>
           </div>
